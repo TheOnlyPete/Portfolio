@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import projects from "../../content/projects.json";
+import site from "../../content/site.json";
 
 const featured = projects.filter(project => project.featured);
 
@@ -20,12 +21,12 @@ export default function HomePage() {
   return (
     <main className={`simple-home simple-home--${project.visual}`}>
       <header className="simple-header">
-        <nav><a href="/projects">Projects</a><a href="/about">About</a><a href="#contact">Contact</a></nav>
+        <nav><a href="/projects">Projects</a><a href="/about">About</a><a href="/contact">Contact</a></nav>
       </header>
 
       <section className="simple-identity">
-        <h1>Peter Murphy</h1>
-        <p>Software developer · Game developer · Tool builder</p>
+        <h1>{site.name}</h1>
+        <p>{site.role}</p>
       </section>
 
       <section className="project-carousel" aria-label="Featured projects">
@@ -51,7 +52,7 @@ export default function HomePage() {
         <a className="simple-explore" href="/projects"><span>Explore all projects</span><i>→</i></a>
       </div>
 
-      <footer className="simple-footer" id="contact"><a href="https://github.com/TheOnlyPete" target="_blank" rel="noreferrer">GitHub ↗</a></footer>
+      <footer className="simple-footer"><a href={site.github} target="_blank" rel="noreferrer">GitHub ↗</a></footer>
     </main>
   );
 }
