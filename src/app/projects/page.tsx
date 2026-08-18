@@ -2,8 +2,9 @@
 
 import { useMemo, useState } from "react";
 import projects from "../../../content/projects.json";
+import categoriesData from "../../../content/categories.json";
 
-const categories = ["All", "Games", "Software", "Websites", "APIs", "Experiments"];
+const categories = ["All", ...categoriesData];
 
 export default function ProjectsPage() {
   const [category, setCategory] = useState("All");
@@ -13,7 +14,7 @@ export default function ProjectsPage() {
     <main className="projects-page">
       <div className="top-accent" />
       <nav className="main-nav" aria-label="Primary navigation">
-        <a href="/">Home</a><a className="active" href="/projects">Projects</a><a href="/about">About</a><a href="/#contact">Contact</a>
+        <a href="/">Home</a><a className="active" href="/projects">Projects</a><a href="/about">About</a><a href="/contact">Contact</a>
       </nav>
 
       <header className="page-heading">
