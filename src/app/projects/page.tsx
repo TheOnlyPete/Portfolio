@@ -3,63 +3,42 @@
 import { useMemo, useState } from "react";
 import projects from "../../../content/projects.json";
 
-const categories = ["Featured", "Games", "Software", "Websites", "APIs", "Experiments"];
+const categories = ["All", "Games", "Software", "Websites", "APIs", "Experiments"];
 
 export default function ProjectsPage() {
-  const [category, setCategory] = useState("Featured");
-  const [activeSlug, setActiveSlug] = useState(projects[0]?.slug ?? "");
-
-  const visible = useMemo(() => category === "Featured" ? projects.filter(project => project.featured) : projects.filter(project => project.category === category), [category]);
-  const active = projects.find(project => project.slug === activeSlug && visible.includes(project)) ?? visible[0];
+  const [category, setCategory] = useState("All");
+  const visible = useMemo(() => category === "All" ? projects : projects.filter(project => project.category === category), [category]);
 
   return (
-    <main className="project-browser">
-      <header className="browser-header wide-shell">
-        <a href="/" className="back-link">← Peter Murphy</a>
-        <span>Selected work</span>
-        <a href="/about">About</a>
-      </header>
-
-      <section className="browser-title wide-shell">
-        <p>Projects</p>
-        <h1>Work I&apos;ve designed,<br />built and shipped.</h1>
-      </section>
-
-      <nav className="category-nav" aria-label="Project categories">
-        <div className="wide-shell">
-          {categories.map(item => <button key={item} type="button" className={category === item ? "active" : ""} onClick={() => setCategory(item)}>{item}</button>)}
-        </div>
+    <main className="projects-page">
+      <div className="top-accent" />
+      <nav className="main-nav" aria-label="Primary navigation">
+        <a href="/">Home</a><a className="active" href="/projects">Projects</a><a href="/about">About</a><a href="/#contact">Contact</a>
       </nav>
 
-      <section className="browser-work wide-shell">
-        <div className="project-list">
-          {visible.length ? visible.map((project, index) => (
-            <a
-              className={`project-row${active?.slug === project.slug ? " active" : ""}`}
-              href={`/projects/${project.category.toLowerCase()}/${project.slug}`}
-              key={project.slug}
-              onPointerEnter={() => setActiveSlug(project.slug)}
-              onFocus={() => setActiveSlug(project.slug)}
-            >
-              <span className="row-index">{String(index + 1).padStart(2,"0")}</span>
-              <span className="row-main"><strong>{project.title}</strong><small>{project.summary}</small></span>
-              <span className="row-year">{project.year}</span>
-              <span className="row-arrow">↗</span>
-              <div className={`mobile-preview preview--${project.visual}`}><span>{project.displayTitle}</span></div>
-            </a>
-          )) : (
-            <div className="empty-category"><strong>{category}</strong><p>Your first {category.toLowerCase()} project will appear here when you add it.</p></div>
-          )}
-        </div>
+      <header className="page-heading">
+        <h1>Projects</h1>
+        <p>Games, software and tools I&apos;ve designed and built.</p>
+      </header>
 
-        <div className="preview-stage" aria-live="polite">
-          {active && <div key={active.slug} className={`preview-card preview--${active.visual}`}>
-            <div className="preview-orbit" />
-            <span className="preview-category">{active.category} · {active.year}</span>
-            <strong>{active.displayTitle}</strong>
-            <span className="preview-hint">Open project ↗</span>
-          </div>}
-        </div>
+      <nav className="project-categories" aria-label="Project categories">
+        {categories.map(item => <button key={item} type="button" className={category === item ? "active" : ""} onClick={() => setCategory(item)}>{item}</button>)}
+      </nav>
+
+      <section className="projects-grid">
+        {visible.map(project => (
+          <article className="project-panel" key={project.slug}>
+            <a className="project-image" href={`/projects/${project.category.toLowerCase()}/${project.slug}`}>
+              {project.image ? <img src={project.image} alt="" /> : <span>{project.title.charAt(0)}</span>}
+            </a>
+            <div className="project-copy">
+              <div><p>{project.category} · {project.year}</p><h2>{project.title}</h2></div>
+              <p className="project-summary">{project.summary}</p>
+              <a className="read-more" href={`/projects/${project.category.toLowerCase()}/${project.slug}`}><span>View project</span><i>→</i></a>
+            </div>
+          </article>
+        ))}
+        {!visible.length && <div className="empty-projects">No {category.toLowerCase()} have been added yet.</div>}
       </section>
     </main>
   );
