@@ -1,0 +1,111 @@
+"use client";
+
+import React from "react";
+
+export type Project = {
+  slug: string;
+  title: string;
+  subtitle?: string;
+  short: string;
+  stack?: string[];
+  highlights?: string[];
+  links?: { label: string; href: string }[];
+  body?: string[];
+};
+
+type Props = {
+  project: Project;
+  onBack: () => void;
+};
+
+export default function ProjectDetail({ project, onBack }: Props) {
+  return (
+    <div className="mx-auto w-full max-w-4xl px-4 pb-16">
+      {/* Header */}
+      <div className="mt-10 text-center">
+        <h1 className="text-4xl font-semibold tracking-tight text-white">
+          {project.title}
+        </h1>
+
+        {project.subtitle && (
+          <p className="mt-2 text-sm text-white/60">{project.subtitle}</p>
+        )}
+
+        <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-white/80">
+          {project.short}
+        </p>
+
+        <div className="mt-7 flex items-center justify-center gap-3">
+          <button
+            onClick={onBack}
+            className="rounded-full bg-white/10 px-5 py-2 text-sm text-white/85 ring-1 ring-white/10 hover:bg-white/15"
+          >
+            Back
+          </button>
+        </div>
+      </div>
+
+      {/* Content */}
+      <div className="mt-10 grid gap-6">
+        {(project.stack?.length ?? 0) > 0 && (
+          <section className="rounded-2xl bg-black/25 p-6 ring-1 ring-white/10 backdrop-blur">
+            <h2 className="text-lg font-semibold text-white">Stack</h2>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {project.stack!.map((s) => (
+                <span
+                  key={s}
+                  className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/80 ring-1 ring-white/10"
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {(project.highlights?.length ?? 0) > 0 && (
+          <section className="rounded-2xl bg-black/25 p-6 ring-1 ring-white/10 backdrop-blur">
+            <h2 className="text-lg font-semibold text-white">Highlights</h2>
+            <ul className="mt-3 list-disc space-y-2 pl-5 text-white/80">
+              {project.highlights!.map((h) => (
+                <li key={h}>{h}</li>
+              ))}
+            </ul>
+          </section>
+        )}
+
+        {(project.links?.length ?? 0) > 0 && (
+          <section className="rounded-2xl bg-black/25 p-6 ring-1 ring-white/10 backdrop-blur">
+            <h2 className="text-lg font-semibold text-white">Links</h2>
+            <div className="mt-3 flex flex-wrap gap-3">
+              {project.links!.map((l) => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-xl bg-white/10 px-4 py-2 text-sm text-white/85 ring-1 ring-white/10 hover:bg-white/15"
+                >
+                  {l.label}
+                </a>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {(project.body?.length ?? 0) > 0 && (
+          <section className="rounded-2xl bg-black/25 p-6 ring-1 ring-white/10 backdrop-blur">
+            <h2 className="text-lg font-semibold text-white">Details</h2>
+            <div className="mt-4 space-y-4 text-white/80">
+              {project.body!.map((p, i) => (
+                <p key={i} className="leading-relaxed">
+                  {p}
+                </p>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,112 @@
+@import "tailwindcss";
+
+:root {
+  --bg-1: #0b0d10;
+  --fg-0: rgba(255, 255, 255, 0.92);
+
+  --stone-image: url("/Backgrounds/forest13.jpg");
+  --grain-image: url("/Backgrounds/grain.png");
+}
+
+
+html,
+body {
+  height: 100%;
+  color: var(--fg-0);
+  font-family: var(--font-sans, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif);
+}
+
+/* Base stone material (behind everything) */
+body {
+  background-color: #0b0d10;
+  background-image: var(--stone-image);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  image-rendering: auto;
+}
+
+
+
+/*
+  NEW: Dark wash ABOVE stone, BELOW stars.
+  This is what makes particles readable without destroying the texture.
+*/
+.bg-stone-wash {
+  background:
+    radial-gradient(
+      1200px circle at 50% 28%,
+      rgba(0,0,0,0.30) 0%,
+      rgba(0,0,0,0.62) 58%,
+      rgba(0,0,0,0.78) 100%
+    );
+  opacity: 1;
+}
+
+/*
+  Improved vignette ABOVE stars.
+  Softer, less "hard ring", and doesn't kill the middle.
+*/
+.bg-vignette-overlay {
+  background:
+    radial-gradient(
+      1400px circle at 50% 45%,
+      rgba(0,0,0,0.0) 38%,
+      rgba(0,0,0,0.42) 72%,
+      rgba(0,0,0,0.72) 100%
+    );
+  opacity: 1;
+}
+
+
+/* Optional: top bloom (reference-style light at top center) */
+.bg-topbloom-overlay {
+  background:
+    radial-gradient(
+      900px circle at 50% 6%,
+      rgba(255,255,255,0.11) 0%,
+      rgba(255,240,220,0.045) 38%,
+      rgba(0,0,0,0) 100%
+    );
+  opacity: 1;
+}
+
+/*
+  Grain overlay.
+  IMPORTANT: If you keep the SVG grain INSIDE BackgroundFX,
+  delete this overlay or you’ll double-grain and it’ll look muddy.
+*/
+.bg-grain-overlay {
+  background-image: var(--grain-image);
+  background-repeat: repeat;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+}
+
+/* Text rendering */
+* {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+
+
+/* Hard-nuke any accidental "glass panel" styles on the tile wrapper */
+.tile-slab-reset {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  outline: 0 !important;
+  backdrop-filter: none !important;
+}
+
+.tile-slab-reset::before,
+.tile-slab-reset::after {
+  content: none !important;
+}
+
+
+
+
