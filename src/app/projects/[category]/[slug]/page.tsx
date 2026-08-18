@@ -41,7 +41,6 @@ export default async function ProjectPage({ params }: { params: Promise<{ catego
         <p className="story-summary">{project.summary}</p>
         <div className="story-tech">{project.technologies.map(item => <span key={item}>{item}</span>)}</div>
       </header>
-      {project.image && <figure className="story-cover"><img src={project.image} alt="" /></figure>}
       <article className="story-content">
         {blocks.length ? blocks.map((block, index) => <ContentBlock key={index} block={block} />) : <div className="story-text"><p>{project.description}</p></div>}
       </article>
