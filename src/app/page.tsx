@@ -1,79 +1,57 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useState } from "react";
 import projects from "../../content/projects.json";
 
-const accentByVisual: Record<string, string> = {
-  daydrop: "122, 151, 255",
-  pizza: "218, 139, 99",
-  boids: "87, 190, 178",
-  mandelbrot: "160, 118, 225",
-  portfolio: "170, 176, 188",
-  api: "104, 158, 220",
-};
+const featured = projects.filter(project => project.featured);
 
 export default function HomePage() {
-  const featured = useMemo(() => projects.filter(project => project.featured), []);
   const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
-  const page = useRef<HTMLElement>(null);
+  const project = featured[index] ?? featured[0];
 
-  useEffect(() => setIndex(Math.floor(Math.random() * featured.length)), [featured.length]);
-  useEffect(() => {
-    if (paused || featured.length < 2) return;
-    const timer = window.setInterval(() => setIndex(current => (current + 1) % featured.length), 7000);
-    return () => window.clearInterval(timer);
-  }, [paused, featured.length]);
+  function previous() {
+    setIndex(current => (current - 1 + featured.length) % featured.length);
+  }
 
-  const active = featured[index] ?? featured[0];
-  const accent = accentByVisual[active?.visual] ?? "122, 151, 255";
-
-  function track(event: React.PointerEvent<HTMLElement>) {
-    page.current?.style.setProperty("--pointer-x", `${event.clientX}px`);
-    page.current?.style.setProperty("--pointer-y", `${event.clientY}px`);
+  function next() {
+    setIndex(current => (current + 1) % featured.length);
   }
 
   return (
-    <main className="brand-home" ref={page} onPointerMove={track} style={{ "--project-accent": accent } as React.CSSProperties}>
-      <div className="home-spotlight" aria-hidden="true" />
-      <header className="brand-header home-shell">
-        <a className="brand-mark" href="/"><span>PM</span><i /></a>
+    <main className={`simple-home simple-home--${project.visual}`}>
+      <header className="simple-header">
         <nav><a href="/projects">Projects</a><a href="/about">About</a><a href="#contact">Contact</a></nav>
       </header>
 
-      <section className="brand-hero home-shell">
-        <div className="brand-intro">
-          <p className="role">Software developer · Game developer · Tool builder</p>
-          <h1>Peter Murphy</h1>
-          <p className="statement">I build reliable software, games and tools with a focus on how they work—and how they feel to use.</p>
-          <div className="brand-actions">
-            <a className="action-primary" href="/projects"><span>Explore projects</span><i>→</i></a>
-            <a className="action-secondary" href="/about">About me</a>
-          </div>
-        </div>
-        <div className="brand-meta">
-          <span>Based in the UK</span><span>Software engineering</span><span>Automation &amp; interactive work</span>
-        </div>
+      <section className="simple-identity">
+        <h1>Peter Murphy</h1>
+        <p>Software developer · Game developer · Tool builder</p>
       </section>
 
-      <section className="featured-rail" onPointerEnter={() => setPaused(true)} onPointerLeave={() => setPaused(false)}>
-        <div className="home-shell featured-inner">
-          <div className="featured-label"><span>Featured work</span><small>{String(index + 1).padStart(2,"0")} / {String(featured.length).padStart(2,"0")}</small></div>
-          <a className="featured-copy" href={`/projects/${active.category.toLowerCase()}/${active.slug}`} key={`copy-${active.slug}`}>
-            <small>{active.category} · {active.year}</small><strong>{active.title}</strong><p>{active.summary}</p>
-          </a>
-          <a className="featured-image" href={`/projects/${active.category.toLowerCase()}/${active.slug}`} key={`image-${active.slug}`}>
-            {active.image ? <img src={active.image} alt="" /> : <span>{active.title.charAt(0)}</span>}
-            <i>View project ↗</i>
-          </a>
-          <div className="featured-controls">
-            <button type="button" aria-label="Previous project" onClick={() => setIndex(current => (current - 1 + featured.length) % featured.length)}>←</button>
-            <button type="button" aria-label="Next project" onClick={() => setIndex(current => (current + 1) % featured.length)}>→</button>
+      <section className="project-carousel" aria-label="Featured projects">
+        <button className="carousel-arrow carousel-arrow--left" type="button" onClick={previous} aria-label="Previous featured project">←</button>
+
+        <a className="carousel-project" key={project.slug} href={`/projects/${project.category.toLowerCase()}/${project.slug}`}>
+          <div className="carousel-art">
+            {project.image ? <img src={project.image} alt="" /> : <span>{project.title.charAt(0)}</span>}
           </div>
-        </div>
+          <div className="carousel-copy">
+            <h2>{project.title}</h2>
+            <p>{project.summary}</p>
+          </div>
+        </a>
+
+        <button className="carousel-arrow carousel-arrow--right" type="button" onClick={next} aria-label="Next featured project">→</button>
       </section>
 
-      <footer className="brand-footer home-shell" id="contact"><span>© {new Date().getFullYear()} Peter Murphy</span><a href="https://github.com/TheOnlyPete" target="_blank" rel="noreferrer">GitHub ↗</a></footer>
+      <div className="simple-actions">
+        <div className="carousel-dots" aria-label={`Project ${index + 1} of ${featured.length}`}>
+          {featured.map((item, itemIndex) => <button type="button" key={item.slug} className={itemIndex === index ? "active" : ""} onClick={() => setIndex(itemIndex)} aria-label={`Show ${item.title}`} />)}
+        </div>
+        <a className="simple-explore" href="/projects"><span>Explore all projects</span><i>→</i></a>
+      </div>
+
+      <footer className="simple-footer" id="contact"><a href="https://github.com/TheOnlyPete" target="_blank" rel="noreferrer">GitHub ↗</a></footer>
     </main>
   );
 }
