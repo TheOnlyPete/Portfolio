@@ -45,3 +45,12 @@
 @media(max-width:700px){.story-hero{padding:65px 0 50px}.story-summary{font-size:16px}.story-cover{height:65vw;margin-bottom:65px}.story-heading{margin-top:65px}.story-text p{font-size:15px}.story-media{margin:55px auto 65px}.story-split{grid-template-columns:1fr;gap:30px;margin:70px auto}.story-split--right .story-split-media{order:0}.story-split-media{min-height:220px}}
 
 .story-header-divider{width:180px;border:0;border-top:1px solid rgba(255,255,255,.16);margin:0 auto 45px}
+
+/* Shared site navigation */
+.site-header{width:min(1280px,calc(100% - 56px));height:72px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.12);position:relative;z-index:20}
+.site-header-name{color:#f4f3ef;text-decoration:none;font-size:13px;font-weight:600;letter-spacing:.02em}
+.site-header-nav{display:flex;align-items:stretch;height:100%;gap:32px}
+.site-header-nav a{position:relative;display:flex;align-items:center;color:#898992;text-decoration:none;font-size:12px;transition:color .2s ease}
+.site-header-nav a:hover,.site-header-nav a.active{color:#f4f3ef}
+.site-header-nav a.active:after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:#8298ff}
+@media(max-width:640px){.site-header{width:calc(100% - 32px);height:auto;min-height:64px;align-items:flex-start;padding:18px 0;gap:18px}.site-header-name{padding-top:3px}.site-header-nav{height:auto;gap:15px;flex-wrap:wrap;justify-content:flex-end}.site-header-nav a{font-size:11px}.site-header-nav a.active:after{bottom:-7px}}
