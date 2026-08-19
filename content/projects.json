@@ -33,7 +33,7 @@
     "displayTitle": "God Ordered Pizza",
     "slug": "the-day-god-ordered-pizza",
     "category": "Games",
-    "year": "2024",
+    "year": "2022",
     "image": "/Icons/HustlaMoon.png",
     "summary": "A character-driven puzzle adventure with an intentionally unusual premise.",
     "description": "A game project combining interaction design, narrative systems, level logic and supporting API experiments.",
@@ -90,9 +90,9 @@
     "displayTitle": "Boids",
     "slug": "boids-system",
     "category": "Experiments",
-    "year": "2024",
+    "year": "2022",
     "image": "/Icons/Boids-Circle.png",
-    "summary": "An emergent flocking simulation exploring movement through simple local rules.",
+    "summary": "",
     "description": "A real-time visual experiment modelling flocking, schooling and organic group movement.",
     "technologies": [
       "Simulation",
@@ -101,7 +101,28 @@
     ],
     "visual": "boids",
     "featured": true,
-    "blocks": []
+    "blocks": [
+      {
+        "type": "text",
+        "text": "This is a simple demonstration of a boids system. This system is used generally to create flocks of birds and to mimic real world behaviour of flocking animals. In this example I used the system to create organic feeling schools of fish. Approaching fish in this way allowed me to create something that felt very natural all while being immensely less resource intensive and time intensive than creating animations by hand with the added benefit of the behaviours being dynamic.\n\nThis is a preview of the system in development."
+      },
+      {
+        "type": "video",
+        "src": "/projects/boids-system/file-boids.mp4",
+        "caption": "",
+        "size": "wide"
+      },
+      {
+        "type": "text",
+        "text": "Here is an example of the system used in game."
+      },
+      {
+        "type": "video",
+        "src": "/projects/boids-system/file-boids-2.mp4",
+        "caption": "",
+        "size": "wide"
+      }
+    ]
   },
   {
     "title": "Mandelbrot Shader",
@@ -119,7 +140,18 @@
     ],
     "visual": "mandelbrot",
     "featured": false,
-    "blocks": []
+    "blocks": [
+      {
+        "type": "text",
+        "text": "This is a simple demonstration of a hand coded Mandelbrot shader. Unfortunately the video render is quite noisy although does display the power of the shader quite well. This was written in HLSL for compatibility with the Unity game engine."
+      },
+      {
+        "type": "video",
+        "src": "/projects/mandelbrot-shader/file-mandelbrot.mp4",
+        "caption": "",
+        "size": "wide"
+      }
+    ]
   },
   {
     "title": "Portfolio Website",
@@ -144,7 +176,7 @@
     "displayTitle": "Pizza API",
     "slug": "the-day-god-ordered-pizza-api",
     "category": "APIs",
-    "year": "2024",
+    "year": "2022",
     "image": "/Icons/HustlaMoon.png",
     "summary": "A supporting API designed around the systems used by the game project.",
     "description": "An API experiment accompanying The Day God Ordered Pizza.",
@@ -154,6 +186,68 @@
     ],
     "visual": "api",
     "featured": false,
-    "blocks": []
+    "blocks": [
+      {
+        "type": "image",
+        "src": "/projects/the-day-god-ordered-pizza-api/ElevatorEgoScreen_edited_edited.jpg",
+        "alt": "",
+        "caption": "",
+        "size": "normal"
+      },
+      {
+        "type": "text",
+        "text": "This is a demonstration of the API I created to interface with The Day God Ordered Pizza.\n\nIn the game, there are multiple scenarios where the player is able to input their name or a message. This will then be uploaded and saved to a database. When another player is in that same scenario, they may see the original players name or message. \nThe uploading and downloading of data all happens in the background while the player continues their journey."
+      },
+      {
+        "type": "image",
+        "src": "/projects/the-day-god-ordered-pizza-api/image_2022-09-16_155548283.png",
+        "alt": "",
+        "caption": "",
+        "size": "normal"
+      },
+      {
+        "type": "text",
+        "text": "Although there are a number of third party solutions to help achieve this, I found they left a lot to be desired and would restrict what data we are able to save. As a result, I decided to create my own solution so that it could be tailored to the needs of the game and was scalable.\n\nMy method was quite simple in design although did require experience with SQL, PHP and web development.\n\nThe process is as follows; Set up an SQL Server with predefined tables. Create a simple web interface in PHP that can interpret results from a query string and use them to insert data into the database. Create a secondary web page that can return results from the database using the parameters of the query string."
+      },
+      {
+        "type": "image",
+        "src": "/projects/the-day-god-ordered-pizza-api/Screenshot-2022-09-16-154818.png",
+        "alt": "",
+        "caption": "",
+        "size": "normal"
+      },
+      {
+        "type": "text",
+        "text": "With this now set up on a server I am able to query a specific webpage with a query string that is built inside Unity which will allow me to either insert or return data to/from the database.\nThe query string is dynamically built and interpreted by the API as to then create a dynamic SQL query."
+      }
+    ]
+  },
+  {
+    "title": "FunkyBall",
+    "displayTitle": "FunkyBall",
+    "slug": "funkyball",
+    "category": "Games",
+    "year": "2026",
+    "image": "",
+    "summary": "",
+    "description": "",
+    "technologies": [
+      "Game development",
+      "Level design"
+    ],
+    "visual": "",
+    "featured": false,
+    "blocks": [
+      {
+        "type": "text",
+        "text": "Funkyball is a passion project I worked on in my spare time in an attempt to recreate an old flash game I played endlessly when I was younger.\n\n​\n\nThis is a simple 2D game where you control a ball and navigate platforms and obstacles in order to reach a goal.\nOnce the goal is reached, your time on the level is saved and you progress to the next stage.\n\nThe levels get progressively more challenging as you play leading to an addictive and unique platforming experience.\n\n \n\nThe game features a character selection system where skins for your ball are unlocked through level progression along side an online leader board which displays your overall time, the skin you are currently using and a display name.\n\nThis project is due to be released on itch.io for free once the visual style has been perfected."
+      },
+      {
+        "type": "video",
+        "src": "/projects/funkyball/file-funkyball.mp4",
+        "caption": "",
+        "size": "wide"
+      }
+    ]
   }
 ]
