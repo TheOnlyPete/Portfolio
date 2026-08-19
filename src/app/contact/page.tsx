@@ -1,13 +1,11 @@
 import site from "../../../content/site.json";
 import contact from "../../../content/pages/contact.json";
+import SiteHeader from "../components/SiteHeader";
 
 export default function ContactPage() {
   return (
     <main className="clean-contact">
-      <header className="simple-header clean-about-header">
-        <a className="clean-about-name" href="/">{site.name}</a>
-        <nav><a href="/">Home</a><a href="/projects">Projects</a><a href="/about">About</a></nav>
-      </header>
+      <SiteHeader />
 
       <section className="contact-container">
         <p className="about-label">Contact</p>
