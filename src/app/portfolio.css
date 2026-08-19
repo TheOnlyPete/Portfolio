@@ -54,3 +54,18 @@
 .site-header-nav a:hover,.site-header-nav a.active{color:#f4f3ef}
 .site-header-nav a.active:after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;background:#8298ff}
 @media(max-width:640px){.site-header{width:calc(100% - 32px);height:auto;min-height:64px;align-items:flex-start;padding:18px 0;gap:18px}.site-header-name{padding-top:3px}.site-header-nav{height:auto;gap:15px;flex-wrap:wrap;justify-content:flex-end}.site-header-nav a{font-size:11px}.site-header-nav a.active:after{bottom:-7px}}
+
+/* Bin collection content block */
+.bin-widget{width:min(900px,100%);margin:80px auto;padding:34px;border:1px solid rgba(255,255,255,.14);background:linear-gradient(145deg,#0c0e11,#070809)}
+.bin-widget-heading{display:flex;align-items:end;justify-content:space-between;gap:30px;padding-bottom:24px;border-bottom:1px solid rgba(255,255,255,.1)}
+.bin-widget-heading span{color:#8298ff;text-transform:uppercase;letter-spacing:.16em;font-size:10px}
+.bin-widget-heading h2{margin:0;text-align:right;font-size:clamp(24px,3vw,36px);font-weight:580;letter-spacing:-.035em}
+.bin-collection-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:rgba(255,255,255,.1);margin-top:26px}
+.bin-collection{display:flex;align-items:center;gap:22px;padding:24px;background:#090a0c;min-height:150px}
+.bin-collection-icon{width:70px;flex:0 0 70px;color:#818891}
+.bin-collection-icon svg{display:block;width:100%;height:auto;overflow:visible}
+.bin-collection-icon .bin-body,.bin-collection-icon .bin-lid{fill:currentColor}.bin-collection-icon .bin-handle,.bin-collection-icon .bin-detail{fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round}.bin-collection-icon circle{fill:#42474f}
+.bin-collection--recycling .bin-collection-icon{color:#4d8cc8}.bin-collection--garden .bin-collection-icon{color:#6e9661}
+.bin-collection p{margin:0 0 8px;color:#92979e;font-size:12px}.bin-collection h3{margin:0;font-size:20px;font-weight:570;letter-spacing:-.02em}
+.bin-widget-message{margin:28px 0 0;color:#92979e}
+@media(max-width:640px){.bin-widget{margin:55px auto;padding:24px}.bin-widget-heading{display:block}.bin-widget-heading h2{text-align:left;margin-top:10px}.bin-collection-list{grid-template-columns:1fr}}
