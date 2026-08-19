@@ -1,5 +1,6 @@
 import projects from "../../../../../content/projects.json";
 import { notFound } from "next/navigation";
+import SiteHeader from "../../../components/SiteHeader";
 
 type HeaderOptions = { showMeta?: boolean; showTitle?: boolean; showSummary?: boolean; showTags?: boolean; showDivider?: boolean };
 
@@ -42,7 +43,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ catego
 
   return (
     <main className="story-page">
-      <nav className="story-nav"><a href="/projects">← Projects</a><a href="/">Peter Murphy</a></nav>
+      <SiteHeader />
       {hasHeader && <header className="story-hero">
         {showMeta && <p>{project.category} · {project.year}</p>}
         {showTitle && <h1>{project.title}</h1>}
