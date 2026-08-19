@@ -63,7 +63,7 @@
 .bin-collection-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1px;background:rgba(255,255,255,.1);margin-top:26px}
 .bin-collection{display:flex;align-items:center;gap:22px;padding:24px;background:#090a0c;min-height:150px}
 .bin-collection-icon{width:70px;flex:0 0 70px;color:#818891}
-.bin-collection-icon svg{display:block;width:100%;height:auto;overflow:visible}
+.bin-collection-icon svg{display:block;width:100%;height:auto;overflow:visible}.bin-collection-icon img{display:block;width:100%;height:100px;object-fit:contain}
 .bin-collection-icon .bin-body,.bin-collection-icon .bin-lid{fill:currentColor}.bin-collection-icon .bin-handle,.bin-collection-icon .bin-detail{fill:none;stroke:currentColor;stroke-width:4;stroke-linecap:round}.bin-collection-icon circle{fill:#42474f}
 .bin-collection--recycling .bin-collection-icon{color:#4d8cc8}.bin-collection--garden .bin-collection-icon{color:#6e9661}
 .bin-collection p{margin:0 0 8px;color:#92979e;font-size:12px}.bin-collection h3{margin:0;font-size:20px;font-weight:570;letter-spacing:-.02em}
