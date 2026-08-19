@@ -20,11 +20,11 @@ export function generateStaticParams() {
 
 function ContentBlock({ block }: { block: Block }) {
   if (block.type === "heading") return <h2 className="story-heading">{block.heading}</h2>;
-  if (block.type === "text") return <div className="story-text">{block.text?.split("\n\n").map(paragraph => <p key={paragraph}>{paragraph}</p>)}</div>;
+  if (block.type === "text") return <div className="story-text">{block.text?.split("\n\n").map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div>;
   if (block.type === "divider") return <hr className="story-divider" />;
   if (block.type === "image") return <figure className={`story-media story-media--${block.size ?? "normal"}`}><img src={block.src} alt={block.alt ?? ""} />{block.caption && <figcaption>{block.caption}</figcaption>}</figure>;
   if (block.type === "video") return <figure className={`story-media story-media--${block.size ?? "wide"}`}><video src={block.src} controls playsInline />{block.caption && <figcaption>{block.caption}</figcaption>}</figure>;
-  if (block.type === "split") return <section className={`story-split story-split--${block.side ?? "left"}`}><div className="story-split-media">{block.src && <img src={block.src} alt={block.alt ?? ""} />}</div><div><h2>{block.heading}</h2>{block.text?.split("\n\n").map(paragraph => <p key={paragraph}>{paragraph}</p>)}</div></section>;
+  if (block.type === "split") return <section className={`story-split story-split--${block.side ?? "left"}`}><div className="story-split-media">{block.src && <img src={block.src} alt={block.alt ?? ""} />}</div><div><h2>{block.heading}</h2>{block.text?.split("\n\n").map((paragraph, index) => <p key={index}>{paragraph}</p>)}</div></section>;
   return null;
 }
 
