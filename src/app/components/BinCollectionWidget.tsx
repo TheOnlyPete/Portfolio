@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 type Collection = { title: string; date: string };
-type Props = { sourceUrl?: string; heading?: string; count?: number };
+type Props = { sourceUrl?: string; heading?: string; count?: number; recyclingIcon?: string; refuseIcon?: string };
 
 function ordinal(day: number) {
   if (day > 3 && day < 21) return "th";
@@ -34,7 +34,7 @@ function BinIcon() {
   </svg>;
 }
 
-export default function BinCollectionWidget({ sourceUrl = "", heading = "Next bin collection", count = 2 }: Props) {
+export default function BinCollectionWidget({ sourceUrl = "", heading = "Next bin collection", count = 2, recyclingIcon = "", refuseIcon = "" }: Props) {
   const [collections, setCollections] = useState<Collection[]>([]);
   const [state, setState] = useState<"loading" | "ready" | "empty" | "error">(sourceUrl ? "loading" : "error");
 
@@ -56,8 +56,9 @@ export default function BinCollectionWidget({ sourceUrl = "", heading = "Next bi
     {state === "error" && <p className="bin-widget-message">Collection information is currently unavailable.</p>}
     {state === "ready" && <div className="bin-collection-list">{collections.map((collection, index) => {
       const kind = binKind(collection.title);
+      const customIcon = kind === "recycling" ? recyclingIcon : kind === "general" ? refuseIcon : "";
       return <article className={`bin-collection bin-collection--${kind}`} key={`${collection.date}-${collection.title}-${index}`}>
-        <div className="bin-collection-icon"><BinIcon /></div>
+        <div className="bin-collection-icon">{customIcon ? <img src={customIcon} alt="" /> : <BinIcon />}</div>
         <div><p>{friendlyDate(collection.date)}</p><h3>{collection.title}</h3></div>
       </article>;
     })}</div>}
