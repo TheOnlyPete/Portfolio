@@ -34,8 +34,8 @@ function ContentBlock({ block }: { block: Block }) {
 }
 
 export default async function ProjectPage({ params }: { params: Promise<{ category: string; slug: string }> }) {
-  const { category, slug } = await params;
-  const project = projects.find(item => item.category.toLowerCase() === category && item.slug === slug);
+  const { slug } = await params;
+  const project = projects.find(item => item.slug === slug);
   if (!project) notFound();
   const blocks = (project.blocks ?? []) as Block[];
   const header = ((project as typeof project & { header?: HeaderOptions }).header ?? {}) as HeaderOptions;
