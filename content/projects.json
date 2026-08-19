@@ -83,7 +83,8 @@
         "caption": "",
         "size": "wide"
       }
-    ]
+    ],
+    "text": "The Day God Ordered Pizza (TDGOP) is a First Person Puzzle Adventure title set in a hilarious fictional world with a beautifully hand drawn art style.\n\nThe story begins with you (the main character) working at a pizza restaurant and getting a phone call from God who then proceeds to order a Pizza from you. Upon attempting to deliver the pizza, you are hit by a car and find yourself waking up in a bizarre universe filled with larger than life characters, intense but intuitive puzzles and a story with a great twist.\n\nElevator Ego has an extremely expressive dialogue system given the limitations of the art style. We use this to effectively communicate emotion to the player.\nThe dialogue system is effectively 2 parts.\n\nThe first half of the equation is the text boxes. This game has no traditional voice acting, so we needed to explore the expression of dialogue through text. This posed quite a large challenge as players do not typically enjoy reading walls of text. To combat this, we implemented a feature where we can animate and colour specific words so that skimming the text or reading very quickly will still provide the needed information to further the story or solve a puzzle. This combined with the simplification of dialogue not only solved the problem we initially had but had the added benefit of making the text fun to read and very interactive."
   },
   {
     "title": "Boids System",
@@ -169,13 +170,23 @@
     ],
     "visual": "portfolio",
     "featured": false,
-    "blocks": []
+    "blocks": [
+      {
+        "type": "image",
+        "src": "/projects/portfolio-website/Screenshot-2026-08-19-021533.png",
+        "alt": "",
+        "caption": "",
+        "size": "normal"
+      }
+    ],
+    "size": "full",
+    "text": " "
   },
   {
     "title": "The Day God Ordered Pizza API",
     "displayTitle": "Pizza API",
     "slug": "the-day-god-ordered-pizza-api",
-    "category": "APIs",
+    "category": "API",
     "year": "2022",
     "image": "/Icons/HustlaMoon.png",
     "summary": "A supporting API designed around the systems used by the game project.",
@@ -220,7 +231,12 @@
         "type": "text",
         "text": "With this now set up on a server I am able to query a specific webpage with a query string that is built inside Unity which will allow me to either insert or return data to/from the database.\nThe query string is dynamically built and interpreted by the API as to then create a dynamic SQL query."
       }
-    ]
+    ],
+    "header": {
+      "showTitle": true,
+      "showTags": true,
+      "showMeta": true
+    }
   },
   {
     "title": "FunkyBall",
@@ -228,7 +244,7 @@
     "slug": "funkyball",
     "category": "Games",
     "year": "2026",
-    "image": "",
+    "image": "/projects/funkyball/Pink.png",
     "summary": "",
     "description": "",
     "technologies": [
