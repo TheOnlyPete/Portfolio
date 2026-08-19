@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import SiteHeader from "../components/SiteHeader";
 import projects from "../../../content/projects.json";
 import categoriesData from "../../../content/categories.json";
 
@@ -13,9 +14,7 @@ export default function ProjectsPage() {
   return (
     <main className="projects-page">
       <div className="top-accent" />
-      <nav className="main-nav" aria-label="Primary navigation">
-        <a href="/">Home</a><a className="active" href="/projects">Projects</a><a href="/about">About</a><a href="/contact">Contact</a>
-      </nav>
+      <SiteHeader />
 
       <header className="page-heading">
         <h1>Projects</h1>
