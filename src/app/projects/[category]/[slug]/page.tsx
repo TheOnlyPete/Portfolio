@@ -1,7 +1,9 @@
 import projects from "../../../../../content/projects.json";
 import { notFound } from "next/navigation";
 
-type HeaderOptions = { showMeta?: boolean; showTitle?: boolean; showSummary?: boolean; showTags?: boolean; showDivider?: boolean };\n\ntype Block = {
+type HeaderOptions = { showMeta?: boolean; showTitle?: boolean; showSummary?: boolean; showTags?: boolean; showDivider?: boolean };
+
+type Block = {
   type: "heading" | "text" | "image" | "video" | "split" | "divider";
   heading?: string;
   text?: string;
