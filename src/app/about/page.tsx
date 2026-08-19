@@ -1,13 +1,11 @@
 import site from "../../../content/site.json";
 import about from "../../../content/pages/about.json";
+import SiteHeader from "../components/SiteHeader";
 
 export default function AboutPage() {
   return (
     <main className="clean-about">
-      <header className="simple-header clean-about-header">
-        <a className="clean-about-name" href="/">{site.name}</a>
-        <nav><a href="/">Home</a><a href="/projects">Projects</a><a href="/contact">Contact</a></nav>
-      </header>
+      <SiteHeader />
 
       <article className="about-container">
         <header className="about-introduction">
