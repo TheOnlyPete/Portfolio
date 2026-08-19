@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import SiteHeader from "./components/SiteHeader";
 import projects from "../../content/projects.json";
 import site from "../../content/site.json";
 
@@ -20,9 +21,7 @@ export default function HomePage() {
 
   return (
     <main className={`simple-home simple-home--${project.visual}`}>
-      <header className="simple-header">
-        <nav><a href="/projects">Projects</a><a href="/about">About</a><a href="/contact">Contact</a></nav>
-      </header>
+      <SiteHeader />
 
       <section className="simple-identity">
         <h1>{site.name}</h1>
