@@ -1,6 +1,8 @@
 const $ = s => document.querySelector(s);
 const esc = value => String(value ?? "").replace(/[&<>\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const asset = src => src ? `/asset?path=${encodeURIComponent(src)}` : "";
+const cleanText = value => String(value ?? "").replace(/\r\n?/g,"\n").replace(/[\u200B-\u200D\uFEFF]/g,"").replace(/[ \t]+\n/g,"\n").replace(/\n[ \t]*\n(?:[ \t]*\n)+/g,"\n\n").trim();
+function normaliseContent(){data.projects.forEach(p=>{["title","summary","description"].forEach(key=>{if(typeof p[key]==="string")p[key]=cleanText(p[key])});(p.blocks||[]).forEach(block=>{["heading","text","caption","alt"].forEach(key=>{if(typeof block[key]==="string")block[key]=cleanText(block[key])})})})}
 let data, projectIndex = 0, selected = null, insertAt = null, dirty = false, uploadTarget = null;
 const defaults = {
   heading: {type:"heading",heading:"New heading"}, text:{type:"text",text:"Write your story here."},
@@ -46,7 +48,7 @@ function renderInspector(){
     $("#addCategory").onclick=()=>{let name=prompt("New category name");name=name?.trim();if(!name||data.categories.includes(name))return;data.categories.push(name);markDirty();renderAll()};
     return;
   }
-  $("#inspector").querySelectorAll("[data-key]").forEach(el=>{el.oninput=()=>{let v=el.type==="checkbox"?el.checked:el.value;if(el.dataset.key==="technologies")v=v.split(",").map(x=>x.trim()).filter(Boolean);p[el.dataset.key]=v;markDirty();renderCanvas();renderProjects()}});
+  $("#inspector").querySelectorAll("[data-key]").forEach(el=>{const owner=selected===null||isHeader?p:target;el.oninput=()=>{let v=el.type==="checkbox"?el.checked:el.value;if(el.dataset.key==="technologies")v=v.split(",").map(x=>x.trim()).filter(Boolean);owner[el.dataset.key]=v;markDirty();renderCanvas();renderProjects()};if(el.tagName==="TEXTAREA")el.onblur=()=>{const cleaned=cleanText(el.value);if(cleaned!==el.value){el.value=cleaned;owner[el.dataset.key]=cleaned;markDirty();renderCanvas()}}});
   $("#inspector").querySelectorAll("[data-header-key]").forEach(el=>{el.oninput=()=>{p.header??={};p.header[el.dataset.headerKey]=el.checked;markDirty();renderCanvas()}});
   const media=$("#chooseMedia");if(media)media.onclick=()=>{uploadTarget=selected;$("#mediaPicker").accept=target.type==="video"?"video/*":"image/*";$("#mediaPicker").click()};
   const icon=$("#chooseIcon");if(icon)icon.onclick=()=>{uploadTarget="icon";$("#mediaPicker").accept="image/*";$("#mediaPicker").click()};
@@ -63,7 +65,7 @@ function renderProjects(){
 }
 function renderAll(list=true){if(list)renderProjects();renderCanvas();renderInspector()}
 $("#mediaPicker").onchange=async e=>{const file=e.target.files[0];if(!file)return;const p=project();$("#status").textContent="Uploading media…";const res=await fetch(`/api/upload?slug=${encodeURIComponent(p.slug)}&name=${encodeURIComponent(file.name)}`,{method:"POST",body:file});const result=await res.json();if(uploadTarget==="icon")p.image=result.path;else p.blocks[uploadTarget].src=result.path;markDirty();e.target.value="";renderAll(false)};
-$("#save").onclick=async()=>{const button=$("#save");button.disabled=true;button.textContent="Saving…";const res=await fetch("/api/content",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});button.disabled=false;button.textContent="Save changes";if(res.ok){dirty=false;$("#status").textContent="Saved";$("#status").className=""}else $("#status").textContent="Save failed"};
+$("#save").onclick=async()=>{const button=$("#save");button.disabled=true;button.textContent="Saving…";normaliseContent();renderCanvas();const res=await fetch("/api/content",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});button.disabled=false;button.textContent="Save changes";if(res.ok){dirty=false;$("#status").textContent="Saved";$("#status").className=""}else $("#status").textContent="Save failed"};
 $("#newProject").onclick=()=>{const title=prompt("Project name");if(!title)return;const slug=title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"");data.projects.push({title,displayTitle:title,slug,category:"Software",year:new Date().getFullYear().toString(),image:"",summary:"Add a short summary.",description:"",technologies:[],visual:"",featured:false,blocks:[]});projectIndex=data.projects.length-1;selected=null;markDirty();renderAll()};
 window.addEventListener("beforeunload",e=>{if(dirty){e.preventDefault();e.returnValue=""}});
 fetch("/api/content").then(r=>r.json()).then(value=>{data=value;data.projects.forEach(p=>p.blocks??=[]);$("#loading").hidden=true;$("#app").hidden=false;renderAll()}).catch(e=>$("#loading").textContent=`Could not open content: ${e.message}`);
