@@ -12,6 +12,7 @@ const contentFiles = {
   contact: "content/pages/contact.json",
   categories: "content/categories.json",
   projects: "content/projects.json",
+  products: "content/products.json",
 };
 const types = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".png": "image/png", ".jpg": "image/jpeg", ".jpeg": "image/jpeg", ".gif": "image/gif", ".webp": "image/webp", ".svg": "image/svg+xml", ".mp4": "video/mp4", ".webm": "video/webm" };
 
@@ -41,10 +42,11 @@ const server = http.createServer(async (req, res) => {
     if (req.method === "POST" && url.pathname === "/api/upload") {
       const slug = safePart(url.searchParams.get("slug"));
       const name = safePart(url.searchParams.get("name"));
-      const folder = path.join(publicRoot, "projects", slug);
+      const scope = url.searchParams.get("scope") === "products" ? "products" : "projects";
+      const folder = path.join(publicRoot, scope, slug);
       await fs.mkdir(folder, { recursive: true });
       await fs.writeFile(path.join(folder, name), await body(req));
-      return reply(res, 200, JSON.stringify({ path: `/projects/${slug}/${name}` }));
+      return reply(res, 200, JSON.stringify({ path: `/${scope}/${slug}/${name}` }));
     }
     if (req.method === "GET" && url.pathname === "/asset") {
       const file = inside(publicRoot, url.searchParams.get("path") || "");
