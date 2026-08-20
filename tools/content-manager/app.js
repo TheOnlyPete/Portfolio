@@ -1,7 +1,31 @@
 const $ = s => document.querySelector(s);
 const esc = value => String(value ?? "").replace(/[&<>\"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const asset = src => src ? `/asset?path=${encodeURIComponent(src)}` : "";
-const safeColor = value => /^#[0-9a-f]{6}$/i.test(String(value||"")) ? String(value) : "#f28c28";
+const isHexColor = value => /^#[0-9a-f]{6}$/i.test(String(value||""));
+const safeColor = value => isHexColor(value) ? String(value) : "#f28c28";
+const homeFallbackAccent = project => ({pizza:"#d8845d",boids:"#58bdb3",mandelbrot:"#9a72db",daydrop:"#879cff"})[project?.visual]||"#879cff";
+async function sampleImageAccent(src){
+  if(!src)return null;
+  return new Promise(resolve=>{
+    const image=new Image();
+    image.onload=()=>{
+      const canvas=document.createElement("canvas");canvas.width=canvas.height=64;
+      const context=canvas.getContext("2d",{willReadFrequently:true});if(!context)return resolve(null);
+      context.drawImage(image,0,0,64,64);
+      const pixels=context.getImageData(0,0,64,64).data;
+      let red=0,green=0,blue=0,total=0;
+      for(let i=0;i<pixels.length;i+=4){
+        const alpha=pixels[i+3]/255,max=Math.max(pixels[i],pixels[i+1],pixels[i+2]),min=Math.min(pixels[i],pixels[i+1],pixels[i+2]);
+        if(alpha<.18||max<24)continue;
+        const saturation=max?(max-min)/max:0,weight=alpha*(.5+saturation);
+        red+=pixels[i]*weight;green+=pixels[i+1]*weight;blue+=pixels[i+2]*weight;total+=weight;
+      }
+      if(!total)return resolve(null);
+      resolve("#"+[red,green,blue].map(value=>Math.round(value/total).toString(16).padStart(2,"0")).join(""));
+    };
+    image.onerror=()=>resolve(null);image.src=asset(src);
+  });
+}
 const cleanText = value => String(value ?? "").replace(/\r\n?/g,"\n").replace(/[\u200B-\u200D\uFEFF]/g,"").replace(/[ \t]+\n/g,"\n").replace(/\n[ \t]*\n(?:[ \t]*\n)+/g,"\n\n").trim();
 function normaliseContent(){[...(data.projects||[]),...(data.products||[])].forEach(p=>{["title","summary","description"].forEach(key=>{if(typeof p[key]==="string")p[key]=cleanText(p[key])});(p.blocks||[]).forEach(block=>{["heading","text","caption","alt"].forEach(key=>{if(typeof block[key]==="string")block[key]=cleanText(block[key])})})})}
 let data, contentMode = "home", projectIndex = 0, selected = "homeSettings", insertAt = null, dirty = false, uploadTarget = null, savedTextRange = null, homeSlideIndex = 0;
@@ -47,9 +71,9 @@ function headerOptions(p){return Object.assign({showMeta:!isProductMode(),showTi
 function renderHomeCanvas(){
   const h=homeSettings(),items=homeEntries();
   if(homeSlideIndex>=items.length)homeSlideIndex=0;
-  const current=items[homeSlideIndex],p=current?.project,image=current?(current.entry.image||p.image||""):"";
+  const current=items[homeSlideIndex],p=current?.project,image=current?(current.entry.image||p.image||""):"",accent=current?(isHexColor(current.entry.accent)?current.entry.accent:homeFallbackAccent(p)):"#879cff";
   $("#openPage").href="http://localhost:3000/";
-  $("#canvas").innerHTML=`<div class="home-preview">
+  $("#canvas").innerHTML=`<div class="home-preview" style="--home-accent:${accent}">
     <div class="preview-nav"><span>Peter Murphy</span><span>Projects &nbsp; Products &nbsp; About &nbsp; Contact</span></div>
     <section class="home-preview-identity ${selected==="homeSettings"?"selected":""}" data-home-settings><span class="header-edit-label">Click to edit</span><h1>${esc(h.title||data.site.name)}</h1><p>${esc(h.tagline||data.site.role)}</p></section>
     <section class="home-preview-carousel ${typeof selected==="string"&&selected.startsWith("home:")?"selected":""}" data-home-feature>
@@ -65,6 +89,10 @@ function renderHomeCanvas(){
   const step=direction=>{if(!items.length)return;homeSlideIndex=(homeSlideIndex+direction+items.length)%items.length;selected=`home:${items[homeSlideIndex].entry.slug}`;renderAll(false)};
   const prev=$("#canvas").querySelector("[data-home-prev]");if(prev)prev.onclick=e=>{e.stopPropagation();step(-1)};
   const next=$("#canvas").querySelector("[data-home-next]");if(next)next.onclick=e=>{e.stopPropagation();step(1)};
+  if(current&&image&&!isHexColor(current.entry.accent)&&!current.entry.detectingAccent){
+    current.entry.detectingAccent=true;
+    sampleImageAccent(image).then(colour=>{delete current.entry.detectingAccent;if(colour){current.entry.accent=colour;current.entry.accentSource="auto";markDirty();renderAll(false)}});
+  }
 }
 function homeSettingsInspector(){
   const h=homeSettings();
@@ -73,7 +101,8 @@ function homeSettingsInspector(){
 function homeFeatureInspector(slug){
   const entry=homeEntry(slug),p=homeProject(slug);if(!entry||!p)return homeManageInspector();
   const image=entry.image||p.image||"";
-  return `<h2>${esc(p.title)}</h2><p class="hint">This image is used only in the homepage carousel. It does not change the square project-page logo.</p>${image?`<img class="home-feature-image" src="${asset(image)}" alt="">`:`<div class="home-feature-empty">No homepage image yet</div>`}<button class="media-button" id="chooseHomeImage">Choose circular homepage image…</button>${entry.image?`<button class="clear-icon" id="clearHomeImage">Use project image instead</button>`:""}<div class="inspector-actions"><button data-home-move="-1">Move earlier</button><button data-home-move="1">Move later</button><button class="danger" id="removeHomeFeature">Remove from home</button><button id="manageHomeProjects">Manage all</button></div>`;
+  const accent=isHexColor(entry.accent)?entry.accent:homeFallbackAccent(p),swatches=["#f4f3ef","#879cff","#d8845d","#f28c28","#ef4444","#ec4899","#a855f7","#22c55e","#14b8a6","#eab308"];
+  return `<h2>${esc(p.title)}</h2><p class="hint">This image is used only in the homepage carousel. It does not change the square project-page logo.</p>${image?`<img class="home-feature-image" src="${asset(image)}" alt="">`:`<div class="home-feature-empty">No homepage image yet</div>`}<button class="media-button" id="chooseHomeImage">Choose circular homepage image…</button>${entry.image?`<button class="clear-icon" id="clearHomeImage">Use project image instead</button>`:""}<div class="home-accent-field"><span>Glow and line colour</span><div class="colour-value"><i style="background:${accent}"></i><input id="homeAccentHex" value="${accent}" maxlength="7" spellcheck="false"></div><div class="colour-swatches">${swatches.map(colour=>`<button type="button" data-home-accent-swatch="${colour}" class="${colour.toLowerCase()===accent.toLowerCase()?"active":""}" style="--swatch:${colour}"></button>`).join("")}</div><button class="detect-accent" id="detectHomeAccent">Auto-detect from icon</button><small>${entry.accentSource==="custom"?"Custom colour":"Automatically sampled from the icon"}</small></div><div class="inspector-actions"><button data-home-move="-1">Move earlier</button><button data-home-move="1">Move later</button><button class="danger" id="removeHomeFeature">Remove from home</button><button id="manageHomeProjects">Manage all</button></div>`;
 }
 function homeManageInspector(){
   const chosen=new Set(homeSettings().featured.map(item=>item.slug));
@@ -86,7 +115,11 @@ function renderHomeInspector(){
   const manage=$("#manageHomeProjects");if(manage)manage.onclick=()=>{selected="homeManage";renderAll(false)};
   $("#inspector").querySelectorAll("[data-home-toggle]").forEach(el=>el.onchange=()=>{const slug=el.dataset.homeToggle,index=h.featured.findIndex(item=>item.slug===slug);if(el.checked&&index<0)h.featured.push({slug,image:""});if(!el.checked&&index>=0)h.featured.splice(index,1);homeSlideIndex=0;markDirty();renderAll()});
   const choose=$("#chooseHomeImage");if(choose)choose.onclick=()=>{const slug=selected.slice(5);uploadTarget={type:"homeImage",slug};$("#mediaPicker").multiple=false;$("#mediaPicker").accept="image/*";$("#mediaPicker").click()};
-  const clear=$("#clearHomeImage");if(clear)clear.onclick=()=>{delete homeEntry(selected.slice(5)).image;markDirty();renderAll(false)};
+  const clear=$("#clearHomeImage");if(clear)clear.onclick=()=>{const entry=homeEntry(selected.slice(5));delete entry.image;delete entry.accent;markDirty();renderAll(false)};
+  const setAccent=colour=>{if(!isHexColor(colour))return;const entry=homeEntry(selected.slice(5));entry.accent=colour;entry.accentSource="custom";markDirty();renderAll(false)};
+  const accentHex=$("#homeAccentHex");if(accentHex)accentHex.onchange=()=>setAccent(accentHex.value);
+  $("#inspector").querySelectorAll("[data-home-accent-swatch]").forEach(el=>el.onclick=()=>setAccent(el.dataset.homeAccentSwatch));
+  const detect=$("#detectHomeAccent");if(detect)detect.onclick=async()=>{const slug=selected.slice(5),entry=homeEntry(slug),p=homeProject(slug),image=entry.image||p.image||"";detect.disabled=true;detect.textContent="Detecting…";const colour=await sampleImageAccent(image);if(colour){entry.accent=colour;entry.accentSource="auto";markDirty();renderAll(false)}else{detect.disabled=false;detect.textContent="Could not detect colour"}};
   const remove=$("#removeHomeFeature");if(remove)remove.onclick=()=>{const slug=selected.slice(5),index=h.featured.findIndex(item=>item.slug===slug);if(index>=0)h.featured.splice(index,1);homeSlideIndex=0;selected="homeManage";markDirty();renderAll()};
   $("#inspector").querySelectorAll("[data-home-move]").forEach(el=>el.onclick=()=>{const slug=selected.slice(5),index=h.featured.findIndex(item=>item.slug===slug),next=index+Number(el.dataset.homeMove);if(index<0||next<0||next>=h.featured.length)return;[h.featured[index],h.featured[next]]=[h.featured[next],h.featured[index]];homeSlideIndex=next;markDirty();renderAll()});
 }
@@ -200,7 +233,7 @@ $("#mediaPicker").onchange=async e=>{
   $("#status").textContent=files.length>1?`Uploading ${files.length} images…`:"Uploading media…";
   const uploaded=[];
   for(const file of files){const res=await fetch(`/api/upload?scope=${uploadScope}&slug=${encodeURIComponent(uploadSlug)}&name=${encodeURIComponent(file.name)}`,{method:"POST",body:file});if(!res.ok)throw new Error("Upload failed");uploaded.push(await res.json())}
-  if(targetInfo?.type==="homeImage")homeEntry(targetInfo.slug).image=uploaded[0].path;
+  if(targetInfo?.type==="homeImage"){const entry=homeEntry(targetInfo.slug);entry.image=uploaded[0].path;const colour=await sampleImageAccent(entry.image);if(colour){entry.accent=colour;entry.accentSource="auto"}}
   else if(targetInfo==="icon")p.image=uploaded[0].path;
   else if(typeof targetInfo==="object"&&targetInfo.type==="headerIcon"){p.header??={};p.header.icon=uploaded[0].path;p.header.showIcon=true}
   else if(typeof targetInfo==="object"&&targetInfo.type==="gallery"){const block=p.blocks[targetInfo.block];block.images??=[];block.images.push(...uploaded.map((result,index)=>({src:result.path,alt:files[index].name.replace(/\.[^.]+$/,"")})))}
