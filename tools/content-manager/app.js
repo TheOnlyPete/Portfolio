@@ -84,9 +84,9 @@ function renderHomeCanvas(){
     <div class="home-preview-actions">${items.length>1?`<div class="home-preview-dots">${items.map((_,i)=>`<i class="${i===homeSlideIndex?"active":""}"></i>`).join("")}</div>`:""}<span class="home-preview-explore">${esc(h.exploreLabel||"Explore all projects")} <i>→</i></span></div>
     <div class="home-preview-footer">${esc(h.footerLabel||"GitHub ↗")}</div>
   </div>`;
-  $("#canvas").querySelector("[data-home-settings]").onclick=()=>{selected="homeSettings";renderAll(false)};
-  const feature=$("#canvas").querySelector("[data-home-feature]");if(feature)feature.onclick=()=>{if(current)selected=`home:${current.entry.slug}`;else selected="homeManage";renderAll(false)};
-  const step=direction=>{if(!items.length)return;homeSlideIndex=(homeSlideIndex+direction+items.length)%items.length;selected=`home:${items[homeSlideIndex].entry.slug}`;renderAll(false)};
+  $("#canvas").querySelector("[data-home-settings]").onclick=()=>{selected="homeSettings";renderAll()};
+  const feature=$("#canvas").querySelector("[data-home-feature]");if(feature)feature.onclick=()=>{if(current)selected=`home:${current.entry.slug}`;else selected="homeManage";renderAll()};
+  const step=direction=>{if(!items.length)return;homeSlideIndex=(homeSlideIndex+direction+items.length)%items.length;selected=`home:${items[homeSlideIndex].entry.slug}`;renderAll()};
   const prev=$("#canvas").querySelector("[data-home-prev]");if(prev)prev.onclick=e=>{e.stopPropagation();step(-1)};
   const next=$("#canvas").querySelector("[data-home-next]");if(next)next.onclick=e=>{e.stopPropagation();step(1)};
   if(current&&image&&!isHexColor(current.entry.accent)&&!current.entry.detectingAccent){
@@ -112,7 +112,7 @@ function renderHomeInspector(){
   const h=homeSettings();
   $("#inspector").innerHTML=selected==="homeManage"?homeManageInspector():typeof selected==="string"&&selected.startsWith("home:")?homeFeatureInspector(selected.slice(5)):homeSettingsInspector();
   $("#inspector").querySelectorAll("[data-key]").forEach(el=>el.oninput=()=>{h[el.dataset.key]=el.value;markDirty();renderHomeCanvas()});
-  const manage=$("#manageHomeProjects");if(manage)manage.onclick=()=>{selected="homeManage";renderAll(false)};
+  const manage=$("#manageHomeProjects");if(manage)manage.onclick=()=>{selected="homeManage";renderAll()};
   $("#inspector").querySelectorAll("[data-home-toggle]").forEach(el=>el.onchange=()=>{const slug=el.dataset.homeToggle,index=h.featured.findIndex(item=>item.slug===slug);if(el.checked&&index<0)h.featured.push({slug,image:""});if(!el.checked&&index>=0)h.featured.splice(index,1);homeSlideIndex=0;markDirty();renderAll()});
   const choose=$("#chooseHomeImage");if(choose)choose.onclick=()=>{const slug=selected.slice(5);uploadTarget={type:"homeImage",slug};$("#mediaPicker").multiple=false;$("#mediaPicker").accept="image/*";$("#mediaPicker").click()};
   const clear=$("#clearHomeImage");if(clear)clear.onclick=()=>{const entry=homeEntry(selected.slice(5));delete entry.image;delete entry.accent;markDirty();renderAll(false)};
@@ -216,9 +216,9 @@ function renderProjects(){
   if(isHomeMode()){
     const items=homeEntries();
     $("#projectList").innerHTML=`<button class="project-row ${selected==="homeSettings"?"active":""}" data-home-list="settings">Homepage content<span>Name, tagline and links</span></button><div class="home-list-title">Featured projects</div>${items.map((item,i)=>`<button class="project-row ${selected===`home:${item.entry.slug}`?"active":""}" data-home-slug="${esc(item.entry.slug)}">${i+1}. ${esc(item.project.title)}<span>Homepage carousel</span></button>`).join("")}<button class="manage-categories ${selected==="homeManage"?"active":""}" data-home-list="manage">Manage featured projects</button>`;
-    $("#projectList").querySelector('[data-home-list="settings"]').onclick=()=>{selected="homeSettings";renderAll(false)};
-    $("#projectList").querySelector('[data-home-list="manage"]').onclick=()=>{selected="homeManage";renderAll(false)};
-    $("#projectList").querySelectorAll("[data-home-slug]").forEach(el=>el.onclick=()=>{selected=`home:${el.dataset.homeSlug}`;homeSlideIndex=Math.max(0,items.findIndex(item=>item.entry.slug===el.dataset.homeSlug));renderAll(false)});
+    $("#projectList").querySelector('[data-home-list="settings"]').onclick=()=>{selected="homeSettings";renderAll()};
+    $("#projectList").querySelector('[data-home-list="manage"]').onclick=()=>{selected="homeManage";renderAll()};
+    $("#projectList").querySelectorAll("[data-home-slug]").forEach(el=>el.onclick=()=>{selected=`home:${el.dataset.homeSlug}`;homeSlideIndex=Math.max(0,items.findIndex(item=>item.entry.slug===el.dataset.homeSlug));renderAll()});
     return;
   }
   const list=collection();
