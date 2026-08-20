@@ -107,3 +107,6 @@
 /* Per-project homepage accent */
 .simple-home .carousel-art:before,.simple-home .carousel-art:after{background:var(--home-accent,#879cff);filter:drop-shadow(0 0 14px color-mix(in srgb,var(--home-accent,#879cff) 42%,transparent))}
 .simple-home .carousel-art img{filter:drop-shadow(0 0 30px color-mix(in srgb,var(--home-accent,#879cff) 34%,transparent))}
+
+/* Keep every homepage glow on the active project accent */
+.simple-home.simple-home:before{background:var(--home-accent,#879cff)}
