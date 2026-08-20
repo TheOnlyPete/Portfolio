@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState, type CSSProperties } from "react";
 import SiteHeader from "./components/SiteHeader";
 import projects from "../../content/projects.json";
 import site from "../../content/site.json";
 
-type HomeFeature = { slug: string; image?: string };
+type HomeFeature = { slug: string; image?: string; accent?: string };
 type HomeSettings = {
   title?: string;
   tagline?: string;
@@ -21,12 +21,51 @@ const fallbackFeatures: HomeFeature[] = projects.filter(project => project.featu
 const configuredFeatures = home.featured?.length ? home.featured : fallbackFeatures;
 const featured = configuredFeatures.flatMap(feature => {
   const project = projects.find(item => item.slug === feature.slug);
-  return project ? [{ ...project, homeImage: feature.image || project.image }] : [];
+  return project ? [{ ...project, homeImage: feature.image || project.image, homeAccent: feature.accent }] : [];
 });
+
+
+function useImageAccent(src?: string, chosen?: string) {
+  const [detected, setDetected] = useState("#879cff");
+
+  useEffect(() => {
+    if (chosen || !src) return;
+    const image = new Image();
+    image.crossOrigin = "anonymous";
+    image.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = canvas.height = 64;
+      const context = canvas.getContext("2d", { willReadFrequently: true });
+      if (!context) return;
+      context.drawImage(image, 0, 0, 64, 64);
+      const pixels = context.getImageData(0, 0, 64, 64).data;
+      let red = 0, green = 0, blue = 0, weightTotal = 0;
+      for (let index = 0; index < pixels.length; index += 4) {
+        const alpha = pixels[index + 3] / 255;
+        const maximum = Math.max(pixels[index], pixels[index + 1], pixels[index + 2]);
+        const minimum = Math.min(pixels[index], pixels[index + 1], pixels[index + 2]);
+        if (alpha < .18 || maximum < 24) continue;
+        const saturation = maximum ? (maximum - minimum) / maximum : 0;
+        const weight = alpha * (.5 + saturation);
+        red += pixels[index] * weight;
+        green += pixels[index + 1] * weight;
+        blue += pixels[index + 2] * weight;
+        weightTotal += weight;
+      }
+      if (!weightTotal) return;
+      const hex = [red, green, blue].map(value => Math.round(value / weightTotal).toString(16).padStart(2, "0")).join("");
+      setDetected(`#${hex}`);
+    };
+    image.src = src;
+  }, [src, chosen]);
+
+  return chosen || detected;
+}
 
 export default function HomePage() {
   const [index, setIndex] = useState(0);
   const project = featured[index] ?? featured[0];
+  const accent = useImageAccent(project?.homeImage, project?.homeAccent);
 
   function previous() {
     if (featured.length) setIndex(current => (current - 1 + featured.length) % featured.length);
@@ -37,7 +76,7 @@ export default function HomePage() {
   }
 
   return (
-    <main className={`simple-home simple-home--${project?.visual || "portfolio"}`}>
+    <main className={`simple-home simple-home--${project?.visual || "portfolio"}`} style={{ "--home-accent": accent } as CSSProperties}>
       <SiteHeader />
 
       <section className="simple-identity">
