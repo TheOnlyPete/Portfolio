@@ -17,3 +17,14 @@
 .rich-toolbar{display:grid;grid-template-columns:42px 1fr 1fr;gap:6px;margin-bottom:8px}.rich-toolbar input,.rich-toolbar button{min-width:0;height:36px;border:1px solid #3a414b;background:#171a1f;color:#e8e9ea;border-radius:5px;font-size:10px;cursor:pointer}.rich-toolbar input{padding:3px}.rich-text-editor{min-height:190px;padding:12px;border:1px solid #3a3f47;background:#101215;color:#b9b9bf;border-radius:6px;line-height:1.7;outline:none}.rich-text-editor:focus{border-color:var(--blue)}.rich-text-editor p{margin:0 0 16px}.rich-text-editor p:last-child{margin-bottom:0}
 .story-button-preview{width:min(360px,80%);margin:30px auto;padding:14px 16px;border:1px solid #4a5059;display:flex;justify-content:space-between;color:#f3f4f5}.story-button-preview i{color:#8298ff;font-style:normal}
 @media(max-width:1000px){.preview-hero-layout{flex-direction:column}.preview-hero.with-icon .preview-hero-copy{text-align:center}.preview-hero.with-icon .preview-summary{margin-left:auto}.preview-hero.with-icon .preview-tags{justify-content:center}.rich-toolbar{grid-template-columns:38px 1fr}.rich-toolbar button:last-child{grid-column:1/-1}}
+
+.story-button-preview{position:relative;isolation:isolate;overflow:hidden;transition:background .25s,border-color .25s,transform .25s}
+.story-button-preview span,.story-button-preview i{position:relative;z-index:1}
+.story-button-preview--square{border-radius:0}
+.story-button-preview--rounded{border-radius:10px}
+.story-button-preview--pill{border-radius:999px;padding-inline:22px}
+.story-button-preview--hover-fade:hover{background:var(--button-hover);border-color:var(--button-hover);transform:translateY(-2px)}
+.story-button-preview--hover-fill:before{content:"";position:absolute;inset:0;background:var(--button-hover);transform:scaleX(0);transform-origin:left;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
+.story-button-preview--hover-fill:hover{border-color:var(--button-hover);transform:translateY(-2px)}
+.story-button-preview--hover-fill:hover:before{transform:scaleX(1)}
+.field input[type="color"]{height:42px;padding:4px;cursor:pointer}
