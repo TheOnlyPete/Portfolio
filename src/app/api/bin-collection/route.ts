@@ -42,7 +42,7 @@ export async function GET(request: NextRequest) {
       return date && date >= today ? { title: cleanTitle(item.title), date: date.toISOString() } : null;
     }).filter((item): item is { title: string; date: string } => item !== null)
       .sort((a, b) => a.date.localeCompare(b.date));
-    return NextResponse.json({ collections }, { headers: { "Cache-Control": "public, max-age=3600, stale-while-revalidate=21600" } });
+    return NextResponse.json({ collections }, { headers: { "Cache-Control": "no-store" } });
   } catch (error) {
     console.error("Bin collection lookup failed:", error);
     return NextResponse.json({ error: "Unable to retrieve bin collections" }, { status: 502 });
