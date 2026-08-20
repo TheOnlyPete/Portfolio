@@ -103,3 +103,7 @@
 /* Homepage-specific featured artwork */
 .carousel-art img{width:min(210px,72%);height:auto;aspect-ratio:1;border-radius:50%;object-fit:cover}
 .project-carousel--empty{display:grid;place-items:center;color:var(--muted);font-size:13px}
+
+/* Per-project homepage accent */
+.simple-home .carousel-art:before,.simple-home .carousel-art:after{background:var(--home-accent,#879cff);filter:drop-shadow(0 0 14px color-mix(in srgb,var(--home-accent,#879cff) 42%,transparent))}
+.simple-home .carousel-art img{filter:drop-shadow(0 0 30px color-mix(in srgb,var(--home-accent,#879cff) 34%,transparent))}
