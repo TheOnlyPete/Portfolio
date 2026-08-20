@@ -1,0 +1,45 @@
+[
+  {
+    "title": "Daydrop",
+    "displayTitle": "Daydrop",
+    "slug": "daydrop",
+    "category": "Product",
+    "year": "2026",
+    "image": "",
+    "summary": "Leave, attendance and payroll software built for small and medium-sized businesses.",
+    "description": "Daydrop replaces scattered paper processes with one clear system for leave, attendance and payroll.",
+    "technologies": [
+      "ASP.NET Core",
+      "Razor Pages",
+      "EF Core",
+      "SQLite"
+    ],
+    "visual": "daydrop",
+    "featured": true,
+    "header": {
+      "showMeta": false,
+      "showTitle": true,
+      "showSummary": true,
+      "showTags": true,
+      "showDivider": true,
+      "showIcon": true,
+      "icon": "/products/daydrop/Daydrop-logo.png"
+    },
+    "blocks": [
+      {
+        "type": "heading",
+        "heading": "A clearer way to run everyday office processes"
+      },
+      {
+        "type": "text",
+        "text": "Daydrop brings leave requests, attendance records and payroll distribution into one secure and straightforward application designed for small and medium-sized businesses."
+      },
+      {
+        "type": "button",
+        "label": "Contact me about Daydrop",
+        "url": "/contact",
+        "hoverColor": "#f66c5b"
+      }
+    ]
+  }
+]

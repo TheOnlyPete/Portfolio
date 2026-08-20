@@ -1,0 +1,36 @@
+{
+  "name": "Peter Murphy",
+  "role": "Software developer · Game developer · Tool builder",
+  "tagline": "I build reliable software, games and tools with a focus on how they work—and how they feel to use.",
+  "location": "United Kingdom",
+  "email": "",
+  "github": "https://github.com/TheOnlyPete",
+  "home": {
+    "title": "Peter Murphy",
+    "tagline": "Developer  & Solutions Architect",
+    "exploreLabel": "Explore all projects",
+    "exploreUrl": "/projects",
+    "footerLabel": "GitHub ↗",
+    "footerUrl": "https://github.com/TheOnlyPete",
+    "featured": [
+      {
+        "slug": "daydrop",
+        "image": "",
+        "accent": "#f77767",
+        "accentSource": "auto"
+      },
+      {
+        "slug": "the-day-god-ordered-pizza",
+        "image": "",
+        "accent": "#f7f7f7",
+        "accentSource": "auto"
+      },
+      {
+        "slug": "bin-day",
+        "image": "/projects/bin-day/Bins-Circle.png",
+        "accent": "#64792f",
+        "accentSource": "auto"
+      }
+    ]
+  }
+}

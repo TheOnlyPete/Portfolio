@@ -1,16 +1,5 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  experimental: {
-    turbo: {
-      resolveExtensions: [
-        ".js",
-        ".ts",
-        ".jsx",
-        ".tsx",
-        ".css"
-      ],
-    },
-  },
-};
+import type { NextConfig } from "next";
 
-module.exports = nextConfig;
+const nextConfig: NextConfig = {};
+
+export default nextConfig;

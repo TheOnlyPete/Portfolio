@@ -1,0 +1,22 @@
+{
+  "heading": "I'm Peter, a software developer based in the UK.",
+  "lead": "I build business software, developer tools, games and interactive experiments. I care about making things dependable, understandable and genuinely pleasant to use.",
+  "background": [
+    "My professional background is in automated software testing and framework development. I've worked on the systems behind test automation, including tooling for difficult page structures, tables, iframes and repeatable workflows.",
+    "Outside that role, I design and build my own software. That includes Daydrop, a complete internal leave and payroll system delivered for a working office, alongside games, graphics experiments and smaller utilities."
+  ],
+  "workAreas": [
+    {
+      "title": "Software development",
+      "description": "Full-stack applications and internal systems built around real operational requirements."
+    },
+    {
+      "title": "Test automation",
+      "description": "Framework tooling and utilities that make complicated, repetitive testing more reliable."
+    },
+    {
+      "title": "Games & interactive work",
+      "description": "Game systems, simulations, shaders and experiments where engineering meets interaction."
+    }
+  ]
+}
