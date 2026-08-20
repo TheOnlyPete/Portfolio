@@ -22,8 +22,8 @@
       "showSummary": true,
       "showTags": true,
       "showDivider": true,
-      "showIcon": false,
-      "icon": ""
+      "showIcon": true,
+      "icon": "/products/daydrop/Daydrop-logo.png"
     },
     "blocks": [
       {
@@ -37,7 +37,8 @@
       {
         "type": "button",
         "label": "Contact me about Daydrop",
-        "url": "/contact"
+        "url": "/contact",
+        "hoverColor": "#f66c5b"
       }
     ]
   }
