@@ -82,3 +82,6 @@
 .detect-accent{width:100%;margin-top:10px;padding:9px;border:1px solid #46546a;border-radius:6px;background:#1b2a40;color:#cfe0ff;cursor:pointer}
 .detect-accent:hover{background:#263b5d}
 @media(max-width:1000px){.home-preview-art{width:360px}.home-preview-art:before,.home-preview-art:after{width:350px;height:155px}}
+
+.home-preview-project{position:relative;isolation:isolate}
+.home-preview-project:before{content:"";position:absolute;z-index:-1;width:430px;height:300px;left:50%;top:42%;transform:translate(-50%,-50%);border-radius:50%;background:var(--home-accent,#879cff);filter:blur(78px);opacity:.11;pointer-events:none}
