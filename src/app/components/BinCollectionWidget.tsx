@@ -57,9 +57,10 @@ export default function BinCollectionWidget({ sourceUrl = "", heading = "Next bi
     {state === "ready" && <div className="bin-collection-list">{collections.map((collection, index) => {
       const kind = binKind(collection.title);
       const customIcon = kind === "recycling" ? recyclingIcon : kind === "general" ? refuseIcon : "";
+      const displayTitle = kind === "recycling" ? "Recycling" : kind === "general" ? "Refuse" : collection.title;
       return <article className={`bin-collection bin-collection--${kind}`} key={`${collection.date}-${collection.title}-${index}`}>
         <div className="bin-collection-icon">{customIcon ? <img src={customIcon} alt="" /> : <BinIcon />}</div>
-        <div><p>{friendlyDate(collection.date)}</p><h3>{collection.title}</h3></div>
+        <div><p>{friendlyDate(collection.date)}</p><h3>{displayTitle}</h3></div>
       </article>;
     })}</div>}
   </section>;
