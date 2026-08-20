@@ -41,3 +41,4 @@ yarn-error.log*
 next-env.d.ts
 # Project media is deployed separately and stays local
 /public/projects/
+/public/products/
