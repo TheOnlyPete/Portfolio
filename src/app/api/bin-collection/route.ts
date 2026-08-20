@@ -22,7 +22,7 @@ function cleanTitle(value: unknown) {
   const title = String(value ?? "Bin collection").trim();
   const lower = title.toLowerCase();
   if (lower.includes("recycl")) return "Recycling";
-  if (lower.includes("refuse") || lower.includes("residual") || lower.includes("general")) return "General waste";
+  if (lower.includes("refuse") || lower.includes("residual") || lower.includes("general")) return "Refuse";
   if (lower.includes("garden")) return "Garden waste";
   if (lower.includes("food")) return "Food waste";
   return title;
