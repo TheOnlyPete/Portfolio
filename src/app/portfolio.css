@@ -95,3 +95,7 @@
 .story-button--hover-fill:before{content:"";position:absolute;inset:0;z-index:0;background:var(--button-hover);transform:scaleX(0);transform-origin:left;transition:transform .35s cubic-bezier(.2,.8,.2,1)}
 .story-button--hover-fill:hover{background:transparent;border-color:var(--button-hover)}
 .story-button--hover-fill:hover:before{transform:scaleX(1)}
+
+.story-button-label{color:inherit!important;font-size:12px!important}
+.story-button-arrow{color:var(--button-hover)!important}
+.story-button--hover-default:hover{border-color:var(--button-hover);box-shadow:0 0 0 1px color-mix(in srgb,var(--button-hover) 28%,transparent),0 0 22px color-mix(in srgb,var(--button-hover) 22%,transparent)}
