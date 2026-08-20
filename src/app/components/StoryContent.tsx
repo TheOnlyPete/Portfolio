@@ -1,5 +1,6 @@
 import BinCollectionWidget from "./BinCollectionWidget";
 import SlideshowGallery, { type GalleryImage } from "./SlideshowGallery";
+import type { CSSProperties } from "react";
 
 export type StoryBlock = {
   type: "heading" | "text" | "image" | "video" | "split" | "divider" | "binWidget" | "gallery" | "button";
@@ -19,6 +20,9 @@ export type StoryBlock = {
   images?: GalleryImage[];
   interval?: number;
   thickness?: number;
+  shape?: "square" | "rounded" | "pill";
+  hoverEffect?: "default" | "fade" | "fill";
+  hoverColor?: string;
 };
 
 function PlainText({ text = "" }: { text?: string }) {
@@ -31,7 +35,12 @@ export function StoryContentBlock({ block }: { block: StoryBlock }) {
     ? <div className="story-text story-rich-text" dangerouslySetInnerHTML={{ __html: block.html }} />
     : <div className="story-text"><PlainText text={block.text} /></div>;
   if (block.type === "divider") return <hr className="story-divider" style={{ borderTopWidth: block.thickness ?? 1 }} />;
-  if (block.type === "button") return <div className="story-button-wrap"><a className="story-button" href={block.url || "#"}>{block.label || "Learn more"}<span>→</span></a></div>;
+  if (block.type === "button") {
+    const shape = block.shape ?? "square";
+    const hoverEffect = block.hoverEffect ?? "default";
+    const buttonStyle = { "--button-hover": block.hoverColor ?? "#f28c28" } as CSSProperties;
+    return <div className="story-button-wrap"><a className={`story-button story-button--${shape} story-button--hover-${hoverEffect}`} style={buttonStyle} href={block.url || "#"}><span className="story-button-label">{block.label || "Learn more"}</span><span className="story-button-arrow">→</span></a></div>;
+  }
   if (block.type === "image") return <figure className={`story-media story-media--${block.size ?? "normal"}`}><img src={block.src} alt={block.alt ?? ""} />{block.caption && <figcaption>{block.caption}</figcaption>}</figure>;
   if (block.type === "video") return <figure className={`story-media story-media--${block.size ?? "wide"}`}><video src={block.src} controls playsInline />{block.caption && <figcaption>{block.caption}</figcaption>}</figure>;
   if (block.type === "split") return <section className={`story-split story-split--${block.side ?? "left"}`}><div className="story-split-media">{block.src && <img src={block.src} alt={block.alt ?? ""} />}</div><div><h2>{block.heading}</h2><PlainText text={block.text} /></div></section>;
