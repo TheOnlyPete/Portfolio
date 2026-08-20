@@ -4,5 +4,27 @@
   "tagline": "I build reliable software, games and tools with a focus on how they work—and how they feel to use.",
   "location": "United Kingdom",
   "email": "",
-  "github": "https://github.com/TheOnlyPete"
+  "github": "https://github.com/TheOnlyPete",
+  "home": {
+    "title": "Peter Murphy",
+    "tagline": "Software developer · Game developer · Tool builder",
+    "exploreLabel": "Explore all projects",
+    "exploreUrl": "/projects",
+    "footerLabel": "GitHub ↗",
+    "footerUrl": "https://github.com/TheOnlyPete",
+    "featured": [
+      {
+        "slug": "daydrop",
+        "image": ""
+      },
+      {
+        "slug": "the-day-god-ordered-pizza",
+        "image": ""
+      },
+      {
+        "slug": "boids-system",
+        "image": ""
+      }
+    ]
+  }
 }
