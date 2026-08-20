@@ -99,3 +99,7 @@
 .story-button-label{color:inherit!important;font-size:12px!important}
 .story-button-arrow{color:var(--button-hover)!important}
 .story-button--hover-default:hover{border-color:var(--button-hover);box-shadow:0 0 0 1px color-mix(in srgb,var(--button-hover) 28%,transparent),0 0 22px color-mix(in srgb,var(--button-hover) 22%,transparent)}
+
+/* Homepage-specific featured artwork */
+.carousel-art img{width:min(210px,72%);height:auto;aspect-ratio:1;border-radius:50%;object-fit:cover}
+.project-carousel--empty{display:grid;place-items:center;color:var(--muted);font-size:13px}
