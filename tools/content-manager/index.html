@@ -1,7 +1,7 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Portfolio editor</title><link rel="stylesheet" href="/styles.css"></head>
 <body><div id="loading">Opening your portfolio…</div><div id="app" hidden>
   <header class="topbar"><div><strong>Portfolio editor</strong><span id="status">All changes saved</span></div><div class="top-actions"><a id="openPage" target="_blank">Open real page ↗</a><button id="save" class="primary">Save changes</button></div></header>
-  <div class="workspace"><aside class="projects-panel"><div class="panel-title"><span>Projects</span><button id="newProject" title="New project">＋</button></div><div id="projectList"></div></aside>
+  <div class="workspace"><aside class="projects-panel"><div class="panel-title"><select id="contentMode" aria-label="Content type"><option value="projects">Portfolio</option><option value="products">Products</option></select><button id="newProject" title="New page">＋</button></div><div id="projectList"></div></aside>
   <main class="canvas-wrap"><div class="canvas-note">This is your page. Click anything to edit it.</div><div id="canvas" class="page-canvas"></div></main>
   <aside id="inspector" class="inspector"></aside></div>
 </div><input id="mediaPicker" type="file" hidden><script src="/app.js"></script></body></html>
