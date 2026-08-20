@@ -403,7 +403,7 @@
     "category": "Tools",
     "year": "2026",
     "image": "",
-    "summary": "Add a short summary.",
+    "summary": "Turning awkward council data into a simple, useful interface.",
     "description": "",
     "technologies": [
       "Tools"
@@ -412,6 +412,11 @@
     "featured": false,
     "blocks": [
       {
+        "type": "text",
+        "text": "My local council website provides all the information I need about upcoming bin collections, but getting to it was more cumbersome than it needed to be. Checking a collection meant navigating to the correct page, entering my address and then looking through a long text-based list of dates and collection types. \n\nI wanted something I could glance at and immediately understand, so I investigated how the council's lookup worked. By inspecting the page and the request made when searching for an address, I found the URL being used to retrieve the collection data. I then worked out how the request could be given a date range, allowing me to retrieve upcoming collections directly without repeatedly going through the council website. \n\nThe response turned out to be simple JSON, which made it straightforward to extract the collection dates and waste types and present them through my own interface. The result is a small tool built specifically for my local collection schedule, showing the next few collections in a much clearer visual format. \n\nIt's now the interface I use whenever I need to check which bin goes out next — a small example of identifying an everyday frustration, understanding how the existing system works, and building a more useful experience around the same data.",
+        "html": "My local council website provides all the information I need about upcoming bin collections, but getting to it was more cumbersome than it needed to be. Checking a collection meant navigating to the correct page, entering my address and then looking through a long text-based list of dates and collection types.&nbsp;<br><br>I wanted something I could glance at and immediately understand, so I investigated how the council's lookup worked. By inspecting the page and the request made when searching for an address, I found the URL being used to retrieve the collection data. I then worked out how the request could be given a date range, allowing me to retrieve upcoming collections directly without repeatedly going through the council website.&nbsp;<br><br>The response turned out to be simple JSON, which made it straightforward to extract the collection dates and waste types and present them through my own interface. The result is a small tool built specifically for my local collection schedule, showing the next few collections in a much clearer visual format.&nbsp;<br><br>It's now the interface I use whenever I need to check which bin goes out next — a small example of identifying an everyday frustration, understanding how the existing system works, and building a more useful experience around the same data."
+      },
+      {
         "type": "binWidget",
         "heading": "Next bin collection",
         "url": "https://cms.northnorthants.gov.uk/bin-collection-search/calendarevents/10001195618/2025-02-09/2025-04-20",
@@ -419,6 +424,7 @@
         "recyclingIcon": "/projects/bin-day/wheelie-bin-green.png",
         "refuseIcon": "/projects/bin-day/wheelie-bin-black.png"
       }
-    ]
+    ],
+    "header": {}
   }
 ]
