@@ -4,7 +4,7 @@ const asset = src => src ? `/asset?path=${encodeURIComponent(src)}` : "";
 const safeColor = value => /^#[0-9a-f]{6}$/i.test(String(value||"")) ? String(value) : "#f28c28";
 const cleanText = value => String(value ?? "").replace(/\r\n?/g,"\n").replace(/[\u200B-\u200D\uFEFF]/g,"").replace(/[ \t]+\n/g,"\n").replace(/\n[ \t]*\n(?:[ \t]*\n)+/g,"\n\n").trim();
 function normaliseContent(){[...(data.projects||[]),...(data.products||[])].forEach(p=>{["title","summary","description"].forEach(key=>{if(typeof p[key]==="string")p[key]=cleanText(p[key])});(p.blocks||[]).forEach(block=>{["heading","text","caption","alt"].forEach(key=>{if(typeof block[key]==="string")block[key]=cleanText(block[key])})})})}
-let data, contentMode = "projects", projectIndex = 0, selected = null, insertAt = null, dirty = false, uploadTarget = null, savedTextRange = null;
+let data, contentMode = "home", projectIndex = 0, selected = "homeSettings", insertAt = null, dirty = false, uploadTarget = null, savedTextRange = null, homeSlideIndex = 0;
 const defaults = {
   heading: {type:"heading",heading:"New heading"}, text:{type:"text",text:"Write your story here.",html:""},
   image:{type:"image",src:"",alt:"",caption:"",size:"normal"}, video:{type:"video",src:"",caption:"",size:"wide"},
@@ -16,6 +16,16 @@ const defaults = {
 function collection(){return data[contentMode]||[]}
 function project(){ return collection()[projectIndex]; }
 function isProductMode(){return contentMode==="products"}
+function isHomeMode(){return contentMode==="home"}
+function homeSettings(){
+  data.site??={};
+  data.site.home??={title:data.site.name||"Peter Murphy",tagline:data.site.role||"",exploreLabel:"Explore all projects",exploreUrl:"/projects",footerLabel:"GitHub ↗",footerUrl:data.site.github||"",featured:(data.projects||[]).filter(item=>item.featured).map(item=>({slug:item.slug,image:""}))};
+  data.site.home.featured??=[];
+  return data.site.home;
+}
+function homeEntries(){return homeSettings().featured.map(entry=>({entry,project:data.projects.find(item=>item.slug===entry.slug)})).filter(item=>item.project)}
+function homeEntry(slug){return homeSettings().featured.find(entry=>entry.slug===slug)}
+function homeProject(slug){return data.projects.find(item=>item.slug===slug)}
 function plainToHtml(value){return String(value||"").split(/\n\n+/).map(text=>`<p>${esc(text)}</p>`).join("")}
 function markDirty(){ dirty=true; $("#status").textContent="Unsaved changes"; $("#status").className="toast"; }
 function paragraphs(text){ return String(text||"").split(/\n\n+/).map(p=>`<p>${esc(p)}</p>`).join(""); }
@@ -33,7 +43,56 @@ function blockHTML(block){
 }
 function insertRow(index){ return `<div class="insert-row" data-insert="${index}"><button class="insert-button ${insertAt===index?"open":""}">＋</button>${insertAt===index?`<div class="add-menu">${Object.keys(defaults).map(t=>`<button data-add="${t}">${t==="split"?"Image + text":t==="binWidget"?"Bin widget":t==="gallery"?"Slideshow gallery":t[0].toUpperCase()+t.slice(1)}</button>`).join("")}</div>`:""}</div>`; }
 function headerOptions(p){return Object.assign({showMeta:!isProductMode(),showTitle:true,showSummary:true,showTags:true,showDivider:false,showIcon:false,icon:""},p.header||{})}
+
+function renderHomeCanvas(){
+  const h=homeSettings(),items=homeEntries();
+  if(homeSlideIndex>=items.length)homeSlideIndex=0;
+  const current=items[homeSlideIndex],p=current?.project,image=current?(current.entry.image||p.image||""):"";
+  $("#openPage").href="http://localhost:3000/";
+  $("#canvas").innerHTML=`<div class="home-preview">
+    <div class="preview-nav"><span>Peter Murphy</span><span>Projects &nbsp; Products &nbsp; About &nbsp; Contact</span></div>
+    <section class="home-preview-identity ${selected==="homeSettings"?"selected":""}" data-home-settings><span class="header-edit-label">Click to edit</span><h1>${esc(h.title||data.site.name)}</h1><p>${esc(h.tagline||data.site.role)}</p></section>
+    <section class="home-preview-carousel ${typeof selected==="string"&&selected.startsWith("home:")?"selected":""}" data-home-feature>
+      <button class="home-preview-arrow" data-home-prev>←</button>
+      ${current?`<div class="home-preview-project"><div class="home-preview-art">${image?`<img src="${asset(image)}" alt="">`:`<span>${esc(p.title.charAt(0))}</span>`}</div><h2>${esc(p.title)}</h2><p>${esc(p.summary)}</p></div>`:`<div class="home-preview-empty">Choose projects to feature on your homepage.</div>`}
+      <button class="home-preview-arrow" data-home-next>→</button>
+    </section>
+    <div class="home-preview-actions">${items.length>1?`<div class="home-preview-dots">${items.map((_,i)=>`<i class="${i===homeSlideIndex?"active":""}"></i>`).join("")}</div>`:""}<span class="home-preview-explore">${esc(h.exploreLabel||"Explore all projects")} <i>→</i></span></div>
+    <div class="home-preview-footer">${esc(h.footerLabel||"GitHub ↗")}</div>
+  </div>`;
+  $("#canvas").querySelector("[data-home-settings]").onclick=()=>{selected="homeSettings";renderAll(false)};
+  const feature=$("#canvas").querySelector("[data-home-feature]");if(feature)feature.onclick=()=>{if(current)selected=`home:${current.entry.slug}`;else selected="homeManage";renderAll(false)};
+  const step=direction=>{if(!items.length)return;homeSlideIndex=(homeSlideIndex+direction+items.length)%items.length;selected=`home:${items[homeSlideIndex].entry.slug}`;renderAll(false)};
+  const prev=$("#canvas").querySelector("[data-home-prev]");if(prev)prev.onclick=e=>{e.stopPropagation();step(-1)};
+  const next=$("#canvas").querySelector("[data-home-next]");if(next)next.onclick=e=>{e.stopPropagation();step(1)};
+}
+function homeSettingsInspector(){
+  const h=homeSettings();
+  return `<h2>Home page</h2><p class="hint">Edit the identity and links shown around the featured project carousel.</p>${field("Name","title",h.title||data.site.name)}${field("Tagline","tagline",h.tagline||data.site.role)}${field("Explore button text","exploreLabel",h.exploreLabel||"Explore all projects")}${field("Explore button URL","exploreUrl",h.exploreUrl||"/projects")}${field("Footer link text","footerLabel",h.footerLabel||"GitHub ↗")}${field("Footer link URL","footerUrl",h.footerUrl||data.site.github)}<button class="add-widget-button" id="manageHomeProjects">Manage featured projects</button>`;
+}
+function homeFeatureInspector(slug){
+  const entry=homeEntry(slug),p=homeProject(slug);if(!entry||!p)return homeManageInspector();
+  const image=entry.image||p.image||"";
+  return `<h2>${esc(p.title)}</h2><p class="hint">This image is used only in the homepage carousel. It does not change the square project-page logo.</p>${image?`<img class="home-feature-image" src="${asset(image)}" alt="">`:`<div class="home-feature-empty">No homepage image yet</div>`}<button class="media-button" id="chooseHomeImage">Choose circular homepage image…</button>${entry.image?`<button class="clear-icon" id="clearHomeImage">Use project image instead</button>`:""}<div class="inspector-actions"><button data-home-move="-1">Move earlier</button><button data-home-move="1">Move later</button><button class="danger" id="removeHomeFeature">Remove from home</button><button id="manageHomeProjects">Manage all</button></div>`;
+}
+function homeManageInspector(){
+  const chosen=new Set(homeSettings().featured.map(item=>item.slug));
+  return `<h2>Featured projects</h2><p class="hint">Choose exactly what appears in the homepage carousel. Open a selected project afterwards to give it a separate circular homepage image.</p><div class="home-project-picker">${data.projects.map(p=>`<label><input type="checkbox" data-home-toggle="${esc(p.slug)}" ${chosen.has(p.slug)?"checked":""}><span>${esc(p.title)}</span><small>${esc(p.category)}</small></label>`).join("")}</div>`;
+}
+function renderHomeInspector(){
+  const h=homeSettings();
+  $("#inspector").innerHTML=selected==="homeManage"?homeManageInspector():typeof selected==="string"&&selected.startsWith("home:")?homeFeatureInspector(selected.slice(5)):homeSettingsInspector();
+  $("#inspector").querySelectorAll("[data-key]").forEach(el=>el.oninput=()=>{h[el.dataset.key]=el.value;markDirty();renderHomeCanvas()});
+  const manage=$("#manageHomeProjects");if(manage)manage.onclick=()=>{selected="homeManage";renderAll(false)};
+  $("#inspector").querySelectorAll("[data-home-toggle]").forEach(el=>el.onchange=()=>{const slug=el.dataset.homeToggle,index=h.featured.findIndex(item=>item.slug===slug);if(el.checked&&index<0)h.featured.push({slug,image:""});if(!el.checked&&index>=0)h.featured.splice(index,1);homeSlideIndex=0;markDirty();renderAll()});
+  const choose=$("#chooseHomeImage");if(choose)choose.onclick=()=>{const slug=selected.slice(5);uploadTarget={type:"homeImage",slug};$("#mediaPicker").multiple=false;$("#mediaPicker").accept="image/*";$("#mediaPicker").click()};
+  const clear=$("#clearHomeImage");if(clear)clear.onclick=()=>{delete homeEntry(selected.slice(5)).image;markDirty();renderAll(false)};
+  const remove=$("#removeHomeFeature");if(remove)remove.onclick=()=>{const slug=selected.slice(5),index=h.featured.findIndex(item=>item.slug===slug);if(index>=0)h.featured.splice(index,1);homeSlideIndex=0;selected="homeManage";markDirty();renderAll()};
+  $("#inspector").querySelectorAll("[data-home-move]").forEach(el=>el.onclick=()=>{const slug=selected.slice(5),index=h.featured.findIndex(item=>item.slug===slug),next=index+Number(el.dataset.homeMove);if(index<0||next<0||next>=h.featured.length)return;[h.featured[index],h.featured[next]]=[h.featured[next],h.featured[index]];homeSlideIndex=next;markDirty();renderAll()});
+}
+
 function renderCanvas(){
+  if(isHomeMode())return renderHomeCanvas();
   const p=project(),blocks=p.blocks||[],header=headerOptions(p),headerIcon=header.icon||p.image||"",showIcon=header.showIcon&&headerIcon;
   $("#openPage").href=isProductMode()?`http://localhost:3000/products/${p.slug}`:`http://localhost:3000/projects/${p.category.toLowerCase()}/${p.slug}`;
   $("#canvas").innerHTML=`<div class="preview-nav"><span>← ${isProductMode()?"Products":"Projects"}</span><span>Peter Murphy</span></div><header class="preview-hero editable-header ${selected==="header"?"selected":""} ${showIcon?"with-icon":""}" data-header><span class="header-edit-label">Click to edit header</span><div class="preview-hero-layout">${showIcon?`<img class="preview-hero-icon" src="${asset(headerIcon)}" alt="">`:""}<div class="preview-hero-copy">${header.showMeta?`<div class="preview-kicker">${esc(isProductMode()?"Product":p.category)}${p.year?` · ${esc(p.year)}`:""}</div>`:""}${header.showTitle?`<h1>${esc(p.title)}</h1>`:""}${header.showSummary?`<div class="preview-summary">${esc(p.summary)}</div>`:""}${header.showTags?`<div class="preview-tags">${(p.technologies||[]).map(x=>`<span>${esc(x)}</span>`).join("")}</div>`:""}</div></div></header>${header.showDivider?`<hr class="preview-header-divider">`:""}<div class="blocks">${insertRow(0)}${blocks.length?blocks.map((b,i)=>`<div class="block-shell ${selected===i?"selected":""}" data-block="${i}"><span class="block-actions">Click to edit</span>${blockHTML(b)}</div>${insertRow(i+1)}`).join(""):`<div class="empty-blocks">This page has no sections yet. Use + to add the first one.</div>`}</div>`;
@@ -78,6 +137,7 @@ function blockInspector(b){
   return `<h2>${title} section</h2><p class="hint">Changes appear on the page immediately.</p>${controls}${widgetPicker()}<div class="inspector-actions"><button data-action="up">Move up</button><button data-action="down">Move down</button><button data-action="duplicate">Duplicate</button><button class="danger" data-action="delete">Delete</button></div>`;
 }
 function renderInspector(){
+  if(isHomeMode())return renderHomeInspector();
   const p=project(), isHeader=selected==="header", isCategories=selected==="categories", target=selected===null?p:isHeader?p.header??={}:isCategories?data.categories:p.blocks[selected];
   $("#inspector").innerHTML=isCategories?categoryInspector():selected===null?projectInspector():isHeader?headerInspector():blockInspector(target);
   if(isCategories){
@@ -119,6 +179,15 @@ function moveCategory(index,direction){const target=index+direction;if(target<0|
 function deleteCategory(index){if(data.categories.length===1)return alert("You need at least one category.");const removed=data.categories[index];if(!confirm(`Remove "${removed}"? Projects in it will move to "${data.categories[index===0?1:0]}".`))return;data.categories.splice(index,1);const replacement=data.categories[0];data.projects.forEach(item=>{if(item.category===removed)item.category=replacement});markDirty();renderAll()}
 function blockAction(action){const a=project().blocks,i=selected;if(action==="delete"){a.splice(i,1);selected=null}else if(action==="duplicate"){a.splice(i+1,0,structuredClone(a[i]));selected=i+1}else if(action==="up"&&i>0){[a[i-1],a[i]]=[a[i],a[i-1]];selected--}else if(action==="down"&&i<a.length-1){[a[i+1],a[i]]=[a[i],a[i+1]];selected++}markDirty();renderAll(false)}
 function renderProjects(){
+  $("#newProject").hidden=isHomeMode();
+  if(isHomeMode()){
+    const items=homeEntries();
+    $("#projectList").innerHTML=`<button class="project-row ${selected==="homeSettings"?"active":""}" data-home-list="settings">Homepage content<span>Name, tagline and links</span></button><div class="home-list-title">Featured projects</div>${items.map((item,i)=>`<button class="project-row ${selected===`home:${item.entry.slug}`?"active":""}" data-home-slug="${esc(item.entry.slug)}">${i+1}. ${esc(item.project.title)}<span>Homepage carousel</span></button>`).join("")}<button class="manage-categories ${selected==="homeManage"?"active":""}" data-home-list="manage">Manage featured projects</button>`;
+    $("#projectList").querySelector('[data-home-list="settings"]').onclick=()=>{selected="homeSettings";renderAll(false)};
+    $("#projectList").querySelector('[data-home-list="manage"]').onclick=()=>{selected="homeManage";renderAll(false)};
+    $("#projectList").querySelectorAll("[data-home-slug]").forEach(el=>el.onclick=()=>{selected=`home:${el.dataset.homeSlug}`;homeSlideIndex=Math.max(0,items.findIndex(item=>item.entry.slug===el.dataset.homeSlug));renderAll(false)});
+    return;
+  }
   const list=collection();
   $("#projectList").innerHTML=list.map((p,i)=>`<button class="project-row ${i===projectIndex&&selected!=="categories"?"active":""}" data-project="${i}">${esc(p.title)}<span>${esc(isProductMode()?"Product page":p.category)}</span></button>`).join("")+(!isProductMode()?`<button class="manage-categories ${selected==="categories"?"active":""}" id="manageCategories">Manage categories</button>`:"");
   $("#projectList").querySelectorAll("[data-project]").forEach(el=>el.onclick=()=>{projectIndex=+el.dataset.project;selected=null;insertAt=null;renderAll()});
@@ -127,10 +196,12 @@ function renderProjects(){
 function renderAll(list=true){if(list)renderProjects();renderCanvas();renderInspector()}
 $("#mediaPicker").onchange=async e=>{
   const files=[...e.target.files];if(!files.length)return;
-  const p=project(),targetInfo=uploadTarget;$("#status").textContent=files.length>1?`Uploading ${files.length} images…`:"Uploading media…";
+  const targetInfo=uploadTarget,p=isHomeMode()?null:project(),uploadSlug=isHomeMode()?targetInfo.slug:p.slug,uploadScope=isHomeMode()?"projects":contentMode;
+  $("#status").textContent=files.length>1?`Uploading ${files.length} images…`:"Uploading media…";
   const uploaded=[];
-  for(const file of files){const res=await fetch(`/api/upload?scope=${contentMode}&slug=${encodeURIComponent(p.slug)}&name=${encodeURIComponent(file.name)}`,{method:"POST",body:file});if(!res.ok)throw new Error("Upload failed");uploaded.push(await res.json())}
-  if(targetInfo==="icon")p.image=uploaded[0].path;
+  for(const file of files){const res=await fetch(`/api/upload?scope=${uploadScope}&slug=${encodeURIComponent(uploadSlug)}&name=${encodeURIComponent(file.name)}`,{method:"POST",body:file});if(!res.ok)throw new Error("Upload failed");uploaded.push(await res.json())}
+  if(targetInfo?.type==="homeImage")homeEntry(targetInfo.slug).image=uploaded[0].path;
+  else if(targetInfo==="icon")p.image=uploaded[0].path;
   else if(typeof targetInfo==="object"&&targetInfo.type==="headerIcon"){p.header??={};p.header.icon=uploaded[0].path;p.header.showIcon=true}
   else if(typeof targetInfo==="object"&&targetInfo.type==="gallery"){const block=p.blocks[targetInfo.block];block.images??=[];block.images.push(...uploaded.map((result,index)=>({src:result.path,alt:files[index].name.replace(/\.[^.]+$/,"")})))}
   else if(typeof targetInfo==="object")p.blocks[targetInfo.block][targetInfo.key]=uploaded[0].path;
@@ -139,6 +210,7 @@ $("#mediaPicker").onchange=async e=>{
 };
 $("#save").onclick=async()=>{const button=$("#save");button.disabled=true;button.textContent="Saving…";normaliseContent();renderCanvas();const res=await fetch("/api/content",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});button.disabled=false;button.textContent="Save changes";if(res.ok){dirty=false;$("#status").textContent="Saved";$("#status").className=""}else $("#status").textContent="Save failed"};
 $("#newProject").onclick=()=>{
+  if(isHomeMode())return;
   const kind=isProductMode()?"product":"project",title=prompt(`New ${kind} name`);if(!title)return;
   const slug=title.toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,""),year=new Date().getFullYear().toString();
   const item=isProductMode()
@@ -146,6 +218,6 @@ $("#newProject").onclick=()=>{
     :{title,displayTitle:title,slug,category:data.categories[0]||"Software",year,image:"",summary:"Add a short summary.",description:"",technologies:[],visual:"portfolio",featured:false,blocks:[]};
   collection().push(item);projectIndex=collection().length-1;selected=null;markDirty();renderAll()
 };
-$("#contentMode").onchange=event=>{contentMode=event.target.value;projectIndex=0;selected=null;insertAt=null;renderAll()};
+$("#contentMode").onchange=event=>{contentMode=event.target.value;projectIndex=0;selected=isHomeMode()?"homeSettings":null;insertAt=null;homeSlideIndex=0;renderAll()};
 window.addEventListener("beforeunload",e=>{if(dirty){e.preventDefault();e.returnValue=""}});
 fetch("/api/content").then(r=>r.json()).then(value=>{data=value;data.projects??=[];data.products??=[];[...data.projects,...data.products].forEach(p=>p.blocks??=[]);$("#loading").hidden=true;$("#app").hidden=false;renderAll()}).catch(e=>$("#loading").textContent=`Could not open content: ${e.message}`);
